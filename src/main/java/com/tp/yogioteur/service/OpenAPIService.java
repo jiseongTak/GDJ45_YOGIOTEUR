@@ -7,4 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface OpenAPIService {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException;
+	
+	public void setDate();
 }

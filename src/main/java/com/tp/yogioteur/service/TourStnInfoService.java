@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,22 +19,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.scheduling.annotation.Scheduled;
 
 public class TourStnInfoService implements OpenAPIService {
 
+	private String date;
+	
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		String serviceKey = "Gg6aU7XS52H2mzg7fE0rsB6EskbUYaEGIq+cUukglRDit4bDX4sXDnbnUXBXRmGgh+VLkmq6M8hF/4f7eANimQ==";
-
+		
 		// API 주소
 		StringBuilder sb = new StringBuilder();
 		try {
 			sb.append("http://apis.data.go.kr/1360000/TourStnInfoService/getTourStnVilageFcst");
 			sb.append("?serviceKey=").append(URLEncoder.encode(serviceKey, "UTF-8"));
 			sb.append("&numOfRows=").append(URLEncoder.encode("16", "UTF-8"));
-			sb.append("&pageNo=").append(URLEncoder.encode("1", "UTF-8"));
-			sb.append("&CURRENT_DATE=").append(URLEncoder.encode("2022062601", "UTF-8"));
+			sb.append("&pageNo=").append(URLEncoder.encode("12", "UTF-8"));
+			sb.append("&CURRENT_DATE=").append(URLEncoder.encode(date, "UTF-8"));
 			sb.append("&HOUR=").append(URLEncoder.encode("12", "UTF-8"));
 			sb.append("&COURSE_ID=").append(URLEncoder.encode("389", "UTF-8"));
 			sb.append("&dataType=").append(URLEncoder.encode("JSON", "UTF-8"));
@@ -79,6 +84,7 @@ public class TourStnInfoService implements OpenAPIService {
 		} catch (IOException e) {
 			e.printStackTrace();  // API 응답이 실패하였다.
 		}
+		System.out.println(sb2.toString());
 		JSONObject obj = new JSONObject(sb2.toString());
 		JSONObject items = obj.getJSONObject("response").getJSONObject("body").getJSONObject("items");
 		JSONArray item = items.getJSONArray("item");
@@ -102,5 +108,18 @@ public class TourStnInfoService implements OpenAPIService {
 		out.flush();
 		out.close();
 	}
-
+	
+	@Override
+	@Scheduled(cron = "0 0 6 1/1 * *") //매일 새벽 6시 동작
+	public void setDate() {
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		// 시간을 06시로 고정
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd06");
+		String date = dtf.format(now);
+		
+		this.date = date;
+	}
+	
 }

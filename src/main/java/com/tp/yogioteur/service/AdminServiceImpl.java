@@ -96,7 +96,6 @@ public class AdminServiceImpl implements AdminService {
 						Thumbnails.of(file)
 							.size(96, 54)
 							.toFile(new File(dir, "s_" + saved));
-						
 						ImageDTO image = ImageDTO.builder()
 								.imagePath(path)
 								.imageOrigin(origin)
@@ -416,6 +415,15 @@ public class AdminServiceImpl implements AdminService {
 		model.addAttribute("member", reservation.getMember());
 		model.addAttribute("room", reservation.getRoom());
 		return model;
+	}
+	
+	@Override
+	public Map<String, Object> removeReservation(Long reserNo){
+		int res = adminMapper.deleteReservation(reserNo);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("res", res);
+		
+		return map;
 	}
 	
 }

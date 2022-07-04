@@ -39,9 +39,9 @@
 					tr += '<td class="type' + room.roomTypeDTO.rtNo + '">' + room.roomTypeDTO.rtType + '</td>';
 					tr += '<td>' + room.roomPrice + '</td>';
 					if(room.roomStatus == 0) {
-						tr += '<td>예약가능</td>';
+						tr += '<td class="p">예약가능</td>';
 					} else {
-						tr += '<td>예약불가</td>';
+						tr += '<td class="imp">예약불가</td>';
 					}
 					tr += '<td><input type="button" value="상세보기" class="btnDetail" data-room_no="' + room.roomNo + '"></td>';
 					tr += '</tr>';
@@ -72,6 +72,12 @@
 	}
 	.type3 {
 		color: green;
+	}
+	.p {
+		color: red;
+	}
+	.imp {
+		color: blue;
 	}
 
 </style>
@@ -108,8 +114,8 @@
 							<td class="type${room.roomTypeDTO.rtNo}">${room.roomTypeDTO.rtType}</td>
 							<td>${room.roomPrice}</td>
 							<c:choose>
-								<c:when test="${room.roomStatus eq 0}"><td>예약가능</td></c:when>
-								<c:when test="${room.roomStatus eq 1}"><td>예약불가</td></c:when>
+								<c:when test="${room.roomStatus eq 0}"><td class="p">예약가능</td></c:when>
+								<c:when test="${room.roomStatus eq 1}"><td class="imp">예약불가</td></c:when>
 							</c:choose>
 							<td><input type="button" value="상세보기" class="btnDetail" data-room_no="${room.roomNo}"></td>
 						</tr>

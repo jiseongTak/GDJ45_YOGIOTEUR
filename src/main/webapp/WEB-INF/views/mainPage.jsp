@@ -185,11 +185,12 @@
 			dataType: 'json',
 			success: function(responseText){
 				//var items = responseText.response.body.items.item;
-				$('#items').empty();
+				//$('#items').empty();
+				var html = '';
+				console.log(responseText);
 				$.each(responseText, function(i, item){
-					var tr = '<tr>';
-					tr += '<td>' + item.tm + '</td>';
-					tr += '<td>' + item.spotName + '</td>';
+					html += '<td>' + item.tm + '</td>';
+					html += '<td>' + item.spotName + '</td>';
 					var sky;
 					switch(item.sky){
 					case 1: sky = '맑음'; break;
@@ -202,11 +203,12 @@
 					case 8: sky = '눈'; break;
 					default: sky = '모름';
 					}
-					tr += '<td>' + sky + '</td>';
-					tr += '<td>' + item.th3 + '</td>';
-					tr += '<td>' + item.rhm + '%</td>';
-					tr += '<td>' + item.pop + '%</td>';
-					$('#items').append(tr);
+					html += '<td>' + sky + '</td>';
+					html += '<td>' + item.th3 + '</td>';
+					html += '<td>' + item.rhm + '%</td>';
+					html += '<td>' + item.pop + '%</td>';
+					$('.index'+i).append(html);
+					html = '';
 				})
 			}
 		})
@@ -244,28 +246,27 @@
 	</div>
 	
 	<div class="weather_api">
-		<div class="image">
-			<img src="resources/image/mainPageImage1.jpg" alt="image1" width="90%" height="300px">
-		</div>
-		<div class="image">
-			<img src="resources/image/mainPageImage2.jpg" alt="image2" width="90%" height="300px">
-		</div>
-		<div>
-			<img src="resources/image/mainPageImage3.jpg" alt="image3" width="90%" height="300px">
-			<!-- <table border="1">
-				<thead>
-					<tr>
-						<td>예보시각</td>
-						<td>관광지명</td>
-						<td>날씨</td>
-						<td>기온</td>
-						<td>습도</td>
-						<td>강수확률</td>
-					</tr>
-				</thead>
-				<tbody id="items"></tbody>
-			</table> -->
-		</div>
+		
+		<table>
+			<tbody>
+				<tr>
+					<td><img src="resources/image/mainPageImage1.jpg" alt="image1" width="90%" height="300px"></td>
+					<td><img src="resources/image/mainPageImage2.jpg" alt="image2" width="90%" height="300px"></td>
+					<td><img src="resources/image/mainPageImage3.jpg" alt="image3" width="90%" height="300px"></td>
+				</tr>
+				<tr id="items">
+					<td class="index0"></td>
+					<td class="index1"></td>
+					<td class="index2"></td>
+				</tr>
+			</tbody>
+		</table>
+		<!-- 		<td>예보시각</td>
+					<td>관광지명</td>
+					<td>날씨</td>
+					<td>기온</td>
+					<td>습도</td>
+					<td>강수확률</td> -->
 	</div>
 
 	<div class="footer">

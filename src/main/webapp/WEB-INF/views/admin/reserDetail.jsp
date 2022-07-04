@@ -14,11 +14,35 @@
 
 	$(function() {
 		closeWindow();
+		fnRemoveReser();
+		
 	})
 	
 	function closeWindow() {
 		$('#close').on('click', function() {
 			window.close();
+		})
+	}
+	
+	function fnRemoveReser() {
+		$('#btnRemove').on('click', function() {
+			if(confirm('선택하신 예약을 취소하시겠습니까?')) {
+				$.ajax({
+					url: '${contextPath}/admin/removeReser',
+					data: 'reserNo=' + ${reservation.reserNo},
+					type: 'GET',
+					dataType: 'json',
+					success: function(obj) {
+						if(obj.res == '1') {
+							alert('예약이 취소 되었습니다.');
+							opener.parent.location.reload();
+							window.close();
+						} else if(obj.res == '0') {
+							alert('예약이 취소되지 않았습니다.');
+						}
+					}
+				})
+			}
 		})
 	}
 	
@@ -38,6 +62,7 @@
         예약자 아이디: ${member.memberId}<br>
         예약자 전화번호: ${member.memberPhone}<br>
         <input type="button" id="btnModify" value="수정">
+        <input type="button" id="btnRemove" value="예약취소">
         <input type="button" id="close" value="닫기">
     </form>
 	

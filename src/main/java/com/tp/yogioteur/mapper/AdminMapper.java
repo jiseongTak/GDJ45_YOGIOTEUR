@@ -39,4 +39,7 @@ public interface AdminMapper {
 	
 	public int insertNonMember(NonMemberDTO nonMember);
 	public ReservationDTO selectReservationByReserNo(Long reserNo);
+	public int deleteReservation(Long reserNo);
+	
+	public void updateRoomStatus(Long roomNo);
 }

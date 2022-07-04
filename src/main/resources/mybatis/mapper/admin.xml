@@ -5,21 +5,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.tp.yogioteur.mapper.AdminMapper">
 
-	<insert id="insertRoom" parameterType="RoomDTO">
-		<selectKey keyProperty="roomNo" resultType="Long" order="BEFORE">
-			SELECT ROOM_SEQ.NEXTVAL
-			  FROM DUAL
-		</selectKey>
+	<insert id="insertRoom" parameterType="RoomDTO" useGeneratedKeys="true" keyProperty="roomNo">
+		<!-- <selectKey keyProperty="roomNo" resultType="Long" order="AFTER">
+			SELECT MAX(ROOM_NO) FROM ROOM
+		</selectKey> -->
 		INSERT INTO ROOM
-			(ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
+			(RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
 		VALUES
-			(#{roomNo}, #{rtNo}, #{roomName}, #{roomStatus}, SYSDATE, #{roomCheckOut}, #{roomPrice})
+			(#{rtNo}, #{roomName}, #{roomStatus}, NOW(), #{roomCheckOut}, #{roomPrice})
 	</insert>
 	<insert id="insertImage" parameterType="ImageDTO">
 		INSERT INTO IMAGE
-			(IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
+			(ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
 		VALUES
-			(IMAGE_SEQ.NEXTVAL, #{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
+			(#{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
 	</insert>
 	
 	<resultMap type="RoomTypeDTO" id="RoomTypeMap">
@@ -101,6 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	
+	<!-- 회원 -->
 	<select id="selectMemberList" parameterType="Map" resultType="MemberDTO">
 		SELECT A.MEMBER_NO, A.MEMBER_NAME, A.MEMBER_EMAIL, A.MEMBER_ID, A.MEMBER_PHONE, A.MEMBER_BIRTH, A.SIGN_IN
 		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY MEMBER_NO DESC) AS ROW_NUM, MEMBER_NO, MEMBER_NAME, MEMBER_EMAIL, MEMBER_ID, MEMBER_PHONE, MEMBER_BIRTH, SIGN_IN
@@ -119,6 +119,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE MEMBER_NO = #{memberNo}
 	</select>
 	
+	
+	<!-- 예약 -->
 	<select id="selectReservationList" resultType="ReservationDTO">
 		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_STATUS
 		  FROM RESERVATION
@@ -163,11 +165,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE R.RESER_NO = #{reserNo}
 	</select>
 	
+	<delete id="deleteReservation" parameterType="Long">
+		DELETE
+		  FROM RESERVATION
+		 WHERE RESER_NO = #{reserNo}
+	</delete>
+	
 	<insert id="insertNonMember" parameterType="NonMemberDTO">
 		INSERT INTO NONMEMBER
 			(NON_NO, NON_ID, NON_NAME, NON_PHONE, NON_BIRTH)
 		VALUES
 			(NONMEMBER_SEQ.NEXTVAL, #{nonId}, #{nonName}, #{nonPhone}, #{nonBirth})
 	</insert>
+	
+	<update id="updateRoomStatus" parameterType="Long">
+		UPDATE ROOM
+		   SET ROOM_STATUS = 0
+		 WHERE ROOM_NO = #{roomNo}
+	</update>
 	
 </mapper>

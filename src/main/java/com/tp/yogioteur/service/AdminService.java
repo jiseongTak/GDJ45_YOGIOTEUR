@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import com.tp.yogioteur.domain.ReservationDTO;
 
 public interface AdminService {
 
@@ -26,5 +25,6 @@ public interface AdminService {
 	public Map<String, Object> findReservations();
 	public Map<String, Object> findReservationByMemberNo(HttpServletRequest request, Model model);
 	public Model findReservationByReserNo(HttpServletRequest request, Model model);
+	public Map<String, Object> removeReservation(Long reserNo);
 	
 }

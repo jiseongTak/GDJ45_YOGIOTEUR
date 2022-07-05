@@ -23,6 +23,7 @@
 			$('#rtNo').val("3")
 			break;
 		}
+		
 		$('#btnRemove').on('click', function() {
 			if(confirm('삭제하시겠습니까?')) {
 				location.href='${contextPath}/room/removeRoom?roomNo=${room.roomNo}';
@@ -30,7 +31,8 @@
 		})
 		fnPreview($('#image1'), $('#preview1'));
 		fnPreview($('#image2'), $('#preview2'));
-		fnModify();
+		//fnModify();
+		fnSelectStatus();
 	})
 	
 	function fnPreview(image, preview) {
@@ -47,7 +49,7 @@
 		})
 	}
 	
-	function fnModify() {
+	/* function fnModify() {
 		$('#f').on('submit', function(event) {
 			if($('#roomName').val() == '${room.roomName}') {
 				alert('변경사항이 없습니다.');
@@ -56,6 +58,18 @@
 			}
 			return true;
 		})
+	} */
+	
+	function fnSelectStatus() {
+		var status = ${room.roomStatus}
+		switch(status) {
+		case 0:
+			$('#roomStatus').val("0")
+			break;
+		case 1:
+			$('#roomStatus').val("1")
+			break;
+		}
 	}
 	
 </script>
@@ -79,13 +93,13 @@
 				</select><br>
 				객실이름 <input type="text" name="roomName" id="roomName" value="${room.roomName}"><br>
 				객실가격 <input type="text" name="roomPrice" id="roomPrice" value="${room.roomPrice}"><br>
-				예약상태:
-				<c:choose>
-					<c:when test="${room.roomStatus eq 0}"><td>예약가능</td></c:when>
-					<c:when test="${room.roomStatus eq 1}"><td>예약불가</td></c:when>
-				</c:choose><br>
-				${room.roomCheckIn}<br>
-				${room.roomCheckOut}<br>
+				예약상태: 
+				<select name="roomStatus" id="roomStatus">
+					<option value="0">예약가능</option>
+					<option value="1">예약불가</option>
+				</select><br>
+				체크인 ${room.roomCheckIn}<br>
+				체크아웃 ${room.roomCheckOut}<br>
 				
 				사진1 <input type="file" name="image1" id="image1">
 				<div>

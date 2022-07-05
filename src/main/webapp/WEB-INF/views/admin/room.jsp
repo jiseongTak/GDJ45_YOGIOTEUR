@@ -14,7 +14,7 @@
 		fnRoomDetail();
 		$('#roomStatus').on('change', function() {
 			if($('#roomStatus').val() != '') {
-				fnSelectSatus($('#roomStatus').val());
+				fnSelectStatus($('#roomStatus').val());
 			} else {
 				fnReset();
 			}
@@ -23,7 +23,7 @@
 	
 	var page = 1;
 	// 예약상태(0, 1)로 분류
-	function fnSelectSatus(status) {
+	function fnSelectStatus(status) {
 		$.ajax({
 			url: '${contextPath}/admin/findRoomByStatus',
 			data: 'roomStatus=' + status,

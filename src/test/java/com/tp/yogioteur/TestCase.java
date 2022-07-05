@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tp.yogioteur.config.DBConfig;
 import com.tp.yogioteur.config.ServiceConfig;
@@ -28,6 +29,7 @@ public class TestCase {
 	@Autowired private AdminMapper adminMapper;
 	
 	@Test
+	@Transactional
 	public void 객실목록테스트() {
 		List<RoomDTO> list = adminMapper.selectRoomByStatus(1);
 		int size = list.size();
@@ -38,14 +40,15 @@ public class TestCase {
 		
 		log.info(date);
 		
-		System.out.println(s);
 		for(int i = 0; i < size; i++) {
 			Date checkout = list.get(i).getRoomCheckOut();
-			if(checkout.after(s)) {
-				System.out.println(list.get(i).getRoomCheckOut());
+			if(checkout.before(s)) {
+				log.info(list.get(i).toString());
+//				log.info(list.get(i).getRoomCheckOut().toString());
+//				adminMapper.updateRoomStatus(list.get(i).getRoomNo());
 			}
 		}
-		assertEquals(0, list.size());
+		assertEquals(4, list.size());
 	}
 	
 

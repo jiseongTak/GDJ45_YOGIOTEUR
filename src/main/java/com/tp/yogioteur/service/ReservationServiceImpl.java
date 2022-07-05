@@ -51,7 +51,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Integer people = adult + child;
 		
 		ReservationDTO reservation = ReservationDTO.builder()
-				.reserNo(Long.parseLong(reserNo))
+				.reserNo(reserNo)
 				.memberNo(memberNo)
 				.roomNo(roomNo)
 				.nonNo(nonNo)

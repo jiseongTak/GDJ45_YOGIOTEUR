@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReservationDTO {
 
-	private Long reserNo;
+	private String reserNo;
 	private Long memberNo;
 	private Long roomNo;
 	private Long nonNo;

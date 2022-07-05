@@ -249,19 +249,20 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	@Transactional
 	public void changeRoom(MultipartHttpServletRequest request, HttpServletResponse response) {
 		String roomName = request.getParameter("roomName");
 		Integer roomPrice = Integer.parseInt(request.getParameter("roomPrice"));
 		Long rtNo = Long.parseLong(request.getParameter("rtNo"));
 		Long roomNo = Long.parseLong(request.getParameter("roomNo"));
+		Integer roomStatus = Integer.parseInt(request.getParameter("roomStatus"));
 		
-		
+		System.out.println(roomStatus);
 		RoomDTO room = RoomDTO.builder()
 				.roomNo(roomNo)
 				.roomName(roomName)
 				.roomPrice(roomPrice)
 				.rtNo(rtNo)
+				.roomStatus(roomStatus)
 				.build();
 		
 		int res = adminMapper.updateRoom(room);

@@ -9,8 +9,77 @@
 <title>FAQ</title>
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
+	$(function(){
+		fnFaqAddLimit();
+		fnReviewAddCheck();
+	})
+	function fnFaqAddLimit(){
+		$('#faqContent').on('keyup', function(){
+			$('#faqContent_cnt').html("(" + $(this).val().length+" / 500)");
+			
+			if($(this).val().length > 500){
+				$(this).val($(this).val().substring(0,500));
+				$('#review_textarea_cnt').html("(500 / 500)" );
+			}
+			
+		})
+	}
+	
+	function fnReviewAddCheck(){
+		
+		$('#faqSv').on('submit', function(ev){
+			if($('#faqTitle').val() == '' || $('#faqContent').val() == ''){
+				
+				
+				alert('작성된 내용이 없습니다.');
+				ev.preventDefault();
+				return false;
+			}
+			
+			
+			return true;
+		})
+	}
+	
 	
 </script>
+<style type="text/css">
+	#faqSv {
+		width : 500px;
+		margin : 0 auto;
+	}
+	
+	h1 {
+		text-align : center;
+	}
+	
+	#faqTitle{
+		width: 500px;
+		height: 45px;
+		font-size: 15px;
+		border: 0;
+		border-radius: 10px;
+		outline: none;
+		padding-left: 10px;
+		background-color: rgb(233, 233, 233);
+		margin : 15px 0;
+		
+	}
+	
+	#faqContent {
+		width: 500px;
+	    height: 300px;
+	    font-size: 15px;
+	    border: 0;
+	    border-radius: 10px;
+	    outline: none;
+	    padding-left: 10px;
+	    background-color: rgb(233, 233, 233);
+	    margin : 15px 0;
+	    padding : 10px;
+	}
+	
+</style>
 </head>
 <body>
 	<jsp:include page="../layout/header.jsp"></jsp:include>
@@ -19,9 +88,10 @@
 	
 	<form id="faqSv" action="${contextPath}/faq/faqSave" method="post">
 		<input type="text" id="faqTitle" name="faqTitle"><br>
-		<textarea rows="5" cols="50" name="faqContent"></textarea><br><br>
+		<textarea rows="5" cols="50" id="faqContent" name="faqContent"></textarea><br><br>
+		<div id="faqContent_cnt">(0 / 500)</div><br><br>
 		<button>등록</button>
-		<input type="button" value="목록" onclick="location.href='${contextPath}/faq/faqPage'">
+		<input type="button" value="목록" onclick="location.href='${contextPath}/faq/faqList'">
 		<input type="reset" value="초기화">
 	</form>
 

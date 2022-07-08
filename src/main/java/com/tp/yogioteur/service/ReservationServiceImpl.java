@@ -1,7 +1,9 @@
 package com.tp.yogioteur.service;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +26,6 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationMapper reservationMapper;
 	
-	
-	
 	@Override
 	public void reserToken(HttpServletRequest request, Model model) {
 		String no = ReservationUtils.reservataionCode(8).trim();
@@ -34,19 +34,22 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 	
 	@Override
-	public void payments(HttpServletRequest request, HttpServletResponse response) {
+	public void payments(HttpServletRequest request, HttpServletResponse response){
 		
 		String reserNo = request.getParameter("resReserNo").trim();
 		Long memberNo = Long.parseLong(request.getParameter("resMemberNo"));
 		Long roomNo = Long.parseLong(request.getParameter("resRoomNo"));
-		Long nonNo = 1L;
+
+		String reserCheckIn = request.getParameter("resCheckIn");
+		String reserCheckOut = request.getParameter("resCheckOut");
+		
 		Optional<String> optNo = Optional.ofNullable(request.getParameter("food"));
 		Integer food = Integer.parseInt(optNo.orElse("0"));
 		Integer adult = Integer.parseInt(request.getParameter("adult"));
 		Integer child = Integer.parseInt(request.getParameter("child"));
 		Integer status = 1; // 예약성공
 		Optional<String> opt = Optional.ofNullable(request.getParameter("req"));
-		String req = opt.orElse("요청 사항 없음");
+		String req = opt.orElse("요청사항없음");
 		
 		Integer people = adult + child;
 		
@@ -54,7 +57,8 @@ public class ReservationServiceImpl implements ReservationService {
 				.reserNo(reserNo)
 				.memberNo(memberNo)
 				.roomNo(roomNo)
-				.nonNo(nonNo)
+				.reserCheckIn(reserCheckIn)
+				.reserCheckOut(reserCheckOut)
 				.reserFood(food)
 				.reserPeople(people)
 				.reserStatus(status)
@@ -110,12 +114,18 @@ public class ReservationServiceImpl implements ReservationService {
 		Long rNo = reservation.getRoomNo();
 		model.addAttribute("room", reservationMapper.reservationRoomSelectConfirm(rNo));
 		
-		System.out.println(reservation);
-		System.out.println(rNo);
-		System.out.println(reservationMapper.reservationRoomSelectConfirm(rNo));
-		
 //		System.out.println(reservationMapper.reservationSelectConfirm(no));
 //		System.out.println(reservationMapper.priceSelectConfirm(no));
+	}
+	
+	@Override
+	public void confirmsPopUp(String no, HttpServletRequest request, Model model) {
+		model.addAttribute("reservation", reservationMapper.reservationSelectConfirm(no));
+		model.addAttribute("money", reservationMapper.priceSelectConfirm(no));
+		
+		ReservationDTO reservation = reservationMapper.reservationSelectConfirm(no);
+		Long rNo = reservation.getRoomNo();
+		model.addAttribute("room", reservationMapper.reservationRoomSelectConfirm(rNo));
 	}
 	
 	@Override
@@ -126,6 +136,23 @@ public class ReservationServiceImpl implements ReservationService {
 		
 		List<ReservationDTO> resers = reservationMapper.reservationMemberSelectConfirm(no);
 		
+		System.out.println(resers);
+		
 		model.addAttribute("reservations", resers);
+	}
+	
+	@Override
+	public Map<String, Object> removeReservation(String resNo) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("res1", reservationMapper.deleteReservation(resNo));
+		map.put("res2", reservationMapper.deletePrice(resNo));
+		return map;
+	}
+	
+	@Override
+	public Map<String, Object> changeReservation(ReservationDTO reservation) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("res", reservationMapper.updateReservation(reservation));
+		return map;
 	}
 }

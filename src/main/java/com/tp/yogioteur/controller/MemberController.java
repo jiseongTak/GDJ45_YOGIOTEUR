@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tp.yogioteur.domain.MemberDTO;
 import com.tp.yogioteur.service.MemberService;
+import com.tp.yogioteur.service.ReservationService;
 
 @Controller
 public class MemberController {
@@ -23,6 +24,9 @@ public class MemberController {
 	// 회원가입
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private ReservationService reservationService; //
 	
 	@GetMapping("/member/agreePage")
 	public String agreePage() {
@@ -73,6 +77,7 @@ public class MemberController {
 	public String naverLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String token = memberService.getAccessToken(request, response);
 		MemberDTO loginMember = memberService.getMemberProfile(request, response, token);
+		System.out.println("네이버 로그인 회원정보확인 : " + loginMember);
 		if(loginMember != null) {
 			model.addAttribute("loginMember", loginMember);
 		} 
@@ -179,15 +184,11 @@ public class MemberController {
 	}
 	
 	//예약내역
-//	@GetMapping("/member/confoirmReserPage")
-//	public String confoirmReserPage() {
-//		return "member/confirmReser";
-//	}
+	@GetMapping("/member/confirmReserPage")
+	public String confirmReserPage(HttpServletRequest request, Model model) {
+		reservationService.reserList(request, model);
+		return "member/confirmReser";
+	}
 	
-//	// 문의내역(qna)
-//	@GetMapping("/member/confirmQnaPage")
-//	public String confirmFaqPage() {
-//		return "member/confirmQna";
-//	}
 	
 }

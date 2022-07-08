@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class QnaReplyDTO {
 
-	private Long qrns;
+	
 	private Long qnaReplyNo;
 	private Long qnaNo;
 	private String memberId;

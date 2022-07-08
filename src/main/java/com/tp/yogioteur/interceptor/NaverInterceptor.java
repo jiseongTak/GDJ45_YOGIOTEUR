@@ -18,7 +18,6 @@ public class NaverInterceptor implements HandlerInterceptor {
 		
 		Map<String, Object> map = modelAndView.getModel();
 		Object loginMember = map.get("loginMember");
-		System.out.println(loginMember);
 		
 		if(loginMember != null) {
 			HttpSession session = request.getSession();

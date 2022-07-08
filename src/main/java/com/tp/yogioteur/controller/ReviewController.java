@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.tp.yogioteur.service.ReviewService;
@@ -22,6 +21,8 @@ public class ReviewController {
 	@Autowired
 	public ReviewService reviewService;
 	
+	
+	
 	// 리뷰 전체 목록
 	@GetMapping("/review/reviewList")
 	public String reviewList(HttpServletRequest request, Model model) {
@@ -31,12 +32,14 @@ public class ReviewController {
 	
 	//리뷰 저장
 	@GetMapping("/review/reviewSavePage")
-	public String reviewSavePage() {
+	public String reviewSavePage(@RequestParam(value="roomNo", required=false) Long roomNo, HttpServletRequest request, Model model) {
+		
+		reviewService.ReviewReservation(roomNo, model);
 		return"review/reviewSave";
 	}
 	
-	@PostMapping("/review/reviewSave") public void
-	reviewSave(MultipartHttpServletRequest multiparRequest, HttpServletResponse response) {
+	@PostMapping("/review/reviewSave") 
+	public void reviewSave(MultipartHttpServletRequest multiparRequest, HttpServletResponse response) {
 	
 		reviewService.ReviewSave(multiparRequest, response); 
 	

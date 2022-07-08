@@ -40,13 +40,13 @@ public class ReviewReplyServiceImpl implements ReviewReplyService {
 			PrintWriter out = response.getWriter();
 			if(reviewReplyResult == 1) {
 				out.println("<script>");
-				out.println("alert('리뷰가 등록되었습니다.')");
+				out.println("alert('리뷰댓글이 등록되었습니다.')");
 				out.println("location.href='" + request.getContextPath() + "/review/reviewList'");
 				out.println("</script>");
 				out.close();
 			} else {
 				out.println("<script>");
-				out.println("alert('리뷰가 등록되지 않았습니다.')");
+				out.println("alert('리뷰댓글이 등록되지 않았습니다.')");
 				out.println("history.back()");
 				out.println("</script>");
 				out.close();

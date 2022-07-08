@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.tp.yogioteur.mapper.QnaMapper;
 import com.tp.yogioteur.service.QnaService;
 
 @Controller
@@ -16,6 +17,9 @@ public class QnaController {
 	
 	@Autowired
 	private QnaService qnaService;
+	
+	@Autowired
+	private QnaMapper qnaMapper;
 	
 	@GetMapping("/qna/qnaList")
 	public String qnaList(HttpServletRequest request, Model model) {
@@ -25,8 +29,10 @@ public class QnaController {
 	
 	@GetMapping("/qna/qnaDetailPage")
 	public String qnaDetailPage(Long qnaNo, Model model) {
+		
 		qnaService.selectDetailQna(qnaNo, model);
 		qnaService.selectQnaReplies(qnaNo, model);
+		
 		return "qna/qnaDetail";
 	}
 	
@@ -64,6 +70,7 @@ public class QnaController {
 	@GetMapping("/qna/qnaUpdatePage")
 	public String qnaUpdatePage(Long qnaNo, Model model) {
 		qnaService.selectDetailQna(qnaNo, model);
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		return "qna/qnaUpdate";
 	}
 	

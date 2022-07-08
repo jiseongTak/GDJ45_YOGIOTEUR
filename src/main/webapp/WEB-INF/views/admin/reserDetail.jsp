@@ -26,7 +26,7 @@
 	
 	function fnRemoveReser() {
 		$('#btnRemove').on('click', function() {
-			if(confirm('선택하신 예약을 취소하시겠습니까?')) {
+			if(confirm('선택하신 예약을 삭제하시겠습니까?')) {
 				$.ajax({
 					url: '${contextPath}/admin/removeReser',
 					data: 'reserNo=' + ${reservation.reserNo},
@@ -34,11 +34,11 @@
 					dataType: 'json',
 					success: function(obj) {
 						if(obj.res == '1') {
-							alert('예약이 취소 되었습니다.');
+							alert('예약이 삭제 되었습니다.');
 							opener.parent.location.reload();
 							window.close();
 						} else if(obj.res == '0') {
-							alert('예약이 취소되지 않았습니다.');
+							alert('예약이 삭제되지 않았습니다.');
 						}
 					}
 				})
@@ -56,13 +56,12 @@
     <form>
         예약번호: ${reservation.reserNo}<br>
         객실번호: ${room.roomNo}<br>
-        체크인: ${reservation.reserCheckin}<br>
-        체크아웃: ${reservation.reserCheckout}<br>
+        체크인: ${reservation.reserCheckIn}<br>
+        체크아웃: ${reservation.reserCheckOut}<br>
         예약자 이름: ${member.memberName}<br>
         예약자 아이디: ${member.memberId}<br>
         예약자 전화번호: ${member.memberPhone}<br>
-        <input type="button" id="btnModify" value="수정">
-        <input type="button" id="btnRemove" value="예약취소">
+        <input type="button" id="btnRemove" value="예약 내역 삭제">
         <input type="button" id="close" value="닫기">
     </form>
 	

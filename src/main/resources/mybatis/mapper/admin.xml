@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		VALUES
 			(#{rtNo}, #{roomName}, #{roomStatus}, NOW(), #{roomCheckOut}, #{roomPrice})
 	</insert>
-	<insert id="insertImage" parameterType="ImageDTO">
+	<insert id="insertImage" parameterType="ImageDTO" useGeneratedKeys="true" keyProperty="imageNo">
 		INSERT INTO IMAGE
 			(ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
 		VALUES
@@ -142,8 +142,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<resultMap type="ReservationDTO" id="ReservationMap">
 		<id column="RESER_NO" property="reserNo"/>
-		<result column="RESER_CHECKIN" property="reserCheckin"/>
-		<result column="RESER_CHECKOUT" property="reserCheckout"/>
+		<result column="RESER_CHECKIN" property="reserCheckIn"/>
+		<result column="RESER_CHECKOUT" property="reserCheckOut"/>
 		<result column="RESER_STATUS" property="reserStatus"/>
 		<result column="RESER_PEOPLE" property="reserPeople"/>
 		<result column="RESER_FOOD" property="reserFood"/>

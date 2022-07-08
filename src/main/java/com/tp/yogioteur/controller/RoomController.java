@@ -1,5 +1,9 @@
 package com.tp.yogioteur.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +26,7 @@ public class RoomController {
 	// 객실 조회
 	@PostMapping("/room/roomList")
 	public String roomList(HttpServletRequest request, Model model) {
-		 model.addAttribute("roomList", roomService.roomList(request));
+		 model.addAttribute("roomList", roomService.roomList(request, model));
 		 return "room/roomList";
 	}
 
@@ -33,7 +37,7 @@ public class RoomController {
 			@RequestParam(value = "type", required = false, defaultValue = "image") String type) {
 		return roomService.view(roomNo, type);
 	}
-	
+
 	// 객실 상세
 	@GetMapping("/room/detail")
 	public String detail(HttpServletRequest request, Model model) {

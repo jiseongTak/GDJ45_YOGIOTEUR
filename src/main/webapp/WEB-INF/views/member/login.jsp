@@ -17,7 +17,6 @@
 		fnLogin();	
 		fnRememberId();
 	})
-
 	function fnLogin(){
 	
 		$('#Loginform').on('submit', function(e){
@@ -39,7 +38,6 @@
 			return true;
 		})
 	}
-
 	function fnRememberId(){
 		let rememberId = $.cookie('rememberId');
 		if(rememberId !=''){	
@@ -53,42 +51,111 @@
 
 </script>
 <style>
-	.links > a {
-			color : gray;
+	form > a {
+		text-decoration: none;
+		color: gray;	
+		font-size: 30px;
 	}
-    .container {
-        	margin: auto;
-    }
+	.button_box > a {
+		color : #333;
+		text-decoration: none;
+	}
     .text {
     	text-align: center;
     }
+    * {
+    	padding: 0;
+    	margin: 0;
+    }
+    .join {
+    	width: 390px;
+    	margin: 110px auto;
+    	padding: 60px 50px 51px;
+    	border: 1px solid #dadada;
+    }
+    .title {
+       	width: 100%;
+       	height: 40px;
+       	margin: 0 auto 30px;
+       	text-align: center;
+    }
+    .content {
+    	margin: 10px 0;
+    }
+    .login_box {
+        display: block;
+        height: 48px;
+        margin-bottom: 6px;
+        border: 1px solid #d7d7d7;
+        position: relative;
+    }
+	.login_box > input {
+         width: 350px;
+         height: 17px;
+         padding: 16px 19px 15px;
+         font-size: 14px;
+         font-weight: bold;
+         color: #333;
+         outline: none;
+         border: none;
+         position: absolute;
+        }
+     .btn_login {
+         display: block;
+         height: 50px;
+         width: 390px;
+         background-color: black;
+         font-size: 14px;
+         font-weight: bold;
+         color: #fff;
+         letter-spacing: -0.5px;
+         text-align: center;
+         line-height: 51px;	
+     }
+	.button_box {
+         margin-top: 30px;
+         text-align: center;
+         border-top: 1px solid #f2f2f5;
+         font-size: 14px;
+     }
+     .button_box > a {
+         display: inline-block;
+         padding: 19px 18px 0;
+         color: #333;
+     }
+
 </style>
 </head>
 <body>
-
-	<jsp:include page="../layout/header.jsp"></jsp:include>
 	
-	<div class="text">
-	<h1>YOGIOTEUR 호텔에 오신 것을 환영합니다.</h1>
-	   <p><strong>아이디와 비밀번호를 입력해 주시기 바랍니다.</strong></p>
-	   <p>YOGIOTEUR 호텔 회원이되시면 회원만을 위한 다양한 서비스와 혜택을 받으실 수 있습니다.</p>
-	</div>
-
-        <!-- 메뉴1 내용 -->
-        <div class="content">
-        <h3>로그인</h3>
-            <form id="Loginform" action="${contextPath}/member/login" method="post">
+        <div class="join">
+       		<form id="Loginform" action="${contextPath}/member/login" method="post">
+				<a href="${contextPath}/">
+					<h2 class="title">YOGIOTEUR</h2>
+				</a>
+				<div class="text">
+				   <p><strong>아이디와 비밀번호를 입력해 주시기 바랍니다.</strong></p>
+				   <p>YOGIOTEUR 호텔 회원이되시면 회원만을 위한 다양한 서비스와 혜택을 받으실 수 있습니다.</p>
+				</div>
 				<input type="hidden" name="url" value="${url}">
-				<input type="text" id="memberId" name="memberId" placeholder="아이디"><br>
-				<input type="password" id="memberPw" name="memberPw" placeholder="비밀번호">
-				<button>로그인</button><br>
+				<div class="content">
+					<div class="login_box">
+						<input type="text" id="memberId" name="memberId" class="login_id" placeholder="아이디"><br>
+					</div>
+					<div class="login_box">
+						<input type="password" id="memberPw" name="memberPw" class="login_pw" placeholder="비밀번호">
+					</div>
+				</div>
+				<button class="btn_login" >로그인</button>
 				
-				<label>
-					<input type="checkbox" id="rememberId">아이디저장
-				</label>
+				<div>
+					<label>
+						<input type="checkbox" id="rememberId">아이디저장
+					</label>
+				</div>
 			</form>
 	
-			<div class="links">
+			<div class="button_box">
 				<a href="${contextPath}/member/findIdPage">아이디 찾기</a> |
 				<a href="${contextPath}/member/findPwPage">비밀번호 찾기</a> |
 				<a href="${contextPath}/member/agreePage">회원가입</a> 

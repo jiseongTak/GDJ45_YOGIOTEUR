@@ -1,7 +1,5 @@
 package com.tp.yogioteur.domain;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +14,8 @@ public class ReservationDTO {
 	private String reserNo;
 	private Long memberNo;
 	private Long roomNo;
-	private Long nonNo;
-	private Date reserCheckin;
-	private Date reserCheckout;
+	private String reserCheckIn;
+	private String reserCheckOut;
 	private Integer reserStatus;
 	private Integer reserPeople;
 	private Integer reserFood;

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import com.tp.yogioteur.domain.QnaDTO;
@@ -38,20 +37,21 @@ public class QnaServiceImpl implements QnaService {
 		pageUtils.setPageEntity(totalRecord, page);
 		
 		Map<String, Object> map = new HashMap<>();
-		map.put("beginRecord", pageUtils.getBeginRecord());
-		map.put("endRecord", pageUtils.getEndRecord());
+		map.put("beginRecord", pageUtils.getBeginRecord() -1);
+		map.put("recordPerPage", pageUtils.getRecordPerPage());
 		
 		List<QnaDTO> qnas = qnaMapper.selectQnaList(map);
 		
 		model.addAttribute("qnas", qnas);
 		model.addAttribute("totalRecord", totalRecord);
-		model.addAttribute("paging", pageUtils.getPaging(request.getContextPath() + "/qna/qnaList"));
+		model.addAttribute("paging", pageUtils.getPaging1(request.getContextPath() + "/qna/qnaList"));
 		
 	}
 	
 	@Override
 	public void selectDetailQna(Long qnaNo, Model model) {
 		QnaDTO qna = qnaMapper.selectQnaByNo(qnaNo);
+		qnaMapper.updateQnaHit(qnaNo);
 		
 		model.addAttribute("qna", qna);
 		
@@ -111,6 +111,7 @@ public class QnaServiceImpl implements QnaService {
 				.build();
 		
 		int AddQnaReply = qnaMapper.insertQnaReply(qnaReply);
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		
 		try {
 			response.setContentType("text/html");
@@ -118,7 +119,7 @@ public class QnaServiceImpl implements QnaService {
 			if(AddQnaReply == 1) {
 				out.println("<script>");
 				out.println("alert('댓글이 등록되었습니다.')");
-				out.println("location.href='" + request.getContextPath() + "/qna/qnaList'");
+				out.println("location.href='" + request.getContextPath() + "/qna/qnaDetailPage?qnaNo=" + qnaNo+"'");
 				out.println("</script>");
 				out.close();
 			}else {
@@ -141,7 +142,7 @@ public class QnaServiceImpl implements QnaService {
 	@Override
 	public void selectQnaReplies(Long qnaNo, Model model) {
 		List<QnaReplyDTO> qnaReplies = qnaMapper.selectQnaReplyByNo(qnaNo);
-		
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		model.addAttribute("qnaReplies", qnaReplies);
 		
 	}
@@ -171,14 +172,14 @@ public class QnaServiceImpl implements QnaService {
 				.build();
 		
 		int AddQnaReply = qnaMapper.insertQnaReplySecond(qnaReplySec);
-		
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
 			if(AddQnaReply == 1) {
 				out.println("<script>");
 				out.println("alert('댓글이 등록되었습니다.')");
-				out.println("location.href='" + request.getContextPath() + "/qna/qnaList'");
+				out.println("location.href='" + request.getContextPath() + "/qna/qnaDetailPage?qnaNo=" + qnaNo+"'");
 				out.println("</script>");
 				out.close();
 			}else {
@@ -199,16 +200,17 @@ public class QnaServiceImpl implements QnaService {
 	
 	@Override
 	public void removeReply(HttpServletRequest request, HttpServletResponse response) {
+		Long qnaNo = Long.parseLong(request.getParameter("qnaNo"));
 		Long qnaReplyNo = Long.parseLong(request.getParameter("qnaReplyNo"));
 		int removeReplyRes = qnaMapper.deleteQnaReply(qnaReplyNo);
-		
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
 			if(removeReplyRes == 1) {
 				out.println("<script>");
 				out.println("alert('댓글이 삭제되었습니다.')");
-				out.println("location.href='" + request.getContextPath() + "/qna/qnaList'");
+				out.println("location.href='" + request.getContextPath() + "/qna/qnaDetailPage?qnaNo=" + qnaNo+"'");
 				out.println("</script>");
 				out.close();
 			}else {
@@ -231,11 +233,11 @@ public class QnaServiceImpl implements QnaService {
 		Long qnaNo = Long.parseLong(request.getParameter("qnaNo"));
 		int removeQnaReplyRes = qnaMapper.deleteQnaAndReply(qnaNo);
 		int removeQnaRes = qnaMapper.deleteQna(qnaNo);
-		
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
-			if(removeQnaRes == 1 && removeQnaReplyRes >= 1) {
+			if(removeQnaRes == 1 || removeQnaReplyRes >= 1) {
 				out.println("<script>");
 				out.println("alert('게시글이 삭제되었습니다.')");
 				out.println("location.href='" + request.getContextPath() + "/qna/qnaList'");
@@ -266,13 +268,15 @@ public class QnaServiceImpl implements QnaService {
 				.build();
 		
 		int modifyQnaRes = qnaMapper.updateQna(qna);
+		qnaMapper.updateQnaHitnotD(qnaNo);
+		qnaMapper.updateQnaHitnotD(qnaNo);
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
 			if(modifyQnaRes == 1 ) {
 				out.println("<script>");
 				out.println("alert('게시글이 수정되었습니다.')");
-				out.println("location.href='" + request.getContextPath() + "/qna/qnaList'");
+				out.println("location.href='" + request.getContextPath() + "/qna/qnaDetailPage?qnaNo=" + qnaNo+"'");
 				out.println("</script>");
 				out.close();
 			}else {

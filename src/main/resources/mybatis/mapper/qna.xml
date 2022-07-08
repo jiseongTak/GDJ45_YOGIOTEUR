@@ -13,33 +13,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 목록 -->
 	<select id="selectQnaList" parameterType="Map" resultType="QnaDTO">
-		SELECT Q.QRN, Q.QNA_NO, Q.MEMBER_ID, Q.QNA_TITLE, Q.QNA_CONTENT, Q.QNA_CREATED, Q.QNA_MODIFIED
-		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY QNA_NO DESC) AS QRN, QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_CREATED, QNA_MODIFIED
-		  		  FROM QNA) Q
-		 WHERE Q.QRN BETWEEN #{beginRecord} AND #{endRecord}
+		SELECT QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED, QNA_MODIFIED
+		  FROM QNA
+		  ORDER BY QNA_NO DESC
+		 LIMIT #{beginRecord}, #{recordPerPage}
 	</select>
 	
 
  	<!-- qna원글 삽입 -->
  	<insert id="insertQna" parameterType="QnaDTO">
  		INSERT INTO QNA
- 			(QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_CREATED ,QNA_MODIFIED)
+ 			(MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED ,QNA_MODIFIED)
  		VALUES
- 			(QNA_NO_SEQ.NEXTVAL, #{memberId}, #{qnaTitle},#{qnaContent}, SYSDATE ,SYSDATE)
+ 			(#{memberId}, #{qnaTitle},#{qnaContent}, 0, NOW() ,NOW())
  	</insert>
  	<!-- 원글 수정 -->
  	<update id="updateQna" parameterType="QnaDTO">
  		UPDATE QNA
- 		   SET QNA_CONTENT = #{qnaContent}
+ 		   SET QNA_CONTENT = #{qnaContent} , QNA_MODIFIED = NOW()
  		 WHERE QNA_NO = #{qnaNo}
  	</update>
  		
 	<!-- qna 상세보기 -->
 	<select id="selectQnaByNo" parameterType="Long" resultType="QnaDTO">
-		SELECT QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_CREATED, QNA_MODIFIED
+		SELECT QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED, QNA_MODIFIED
 		  FROM QNA
 		 WHERE QNA_NO = #{qnaNo}
 	</select>
+	
+	<!-- 디테일조회수 증가 -->
+	<update id="updateQnaHit" parameterType="Long">
+		UPDATE QNA
+		   SET QNA_HIT = QNA_HIT + 2
+		 WHERE QNA_NO = #{qnaNo}
+	</update>
+	
+	<!-- 디테일조회수 이외의 조회수 그대로 만들기 -->
+	<update id="updateQnaHitnotD" parameterType="Long">
+		UPDATE QNA
+		   SET QNA_HIT = QNA_HIT - 1
+		 WHERE QNA_NO = #{qnaNo}
+	</update>
+	
 	
 	<!-- 댓글 삽입 전에 처리 -->
 	<!-- 같은 그룹의 기존 댓글의 GROUP_ORD 값 증가시키기 -->
@@ -53,26 +68,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 댓글 처음 삽입 -->
 	<insert id="insertQnaReply" parameterType="QnaReplyDTO">
+		<selectKey keyProperty="qnaReplyNo" order="BEFORE" resultType="Long">
+			SELECT LAST_INSERT_ID()+1
+		</selectKey>
 		INSERT INTO QNA_REPLY
-			(QNA_REPLY_NO, QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
+			(QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
 		VALUES
-			(QNA_REPLY_NO_SEQ.NEXTVAL, #{qnaNo}, #{memberId}, #{qnaReplyContent}, SYSDATE, 1, 0, QNA_REPLY_NO_SEQ.CURRVAL, 0)
+			(#{qnaNo}, #{memberId}, #{qnaReplyContent}, NOW(), 1, 0, #{qnaReplyNo}, 0)
 	</insert>
 
 	<!-- 댓글 조회 -->
 	<select id="selectQnaReplyByNo" parameterType="Long" resultType="QnaReplyDTO">
-		SELECT QR.QRNS ,QR.QNA_REPLY_NO, QR.QNA_NO, QR.MEMBER_ID, QR.QNA_REPLY_CONTENT, QR.QNA_REPLY_CREATED, QR.QNA_REPLY_STATE, QR.QNA_REPLY_DEPTH,QR.QNA_REPLY_GROUP_NO, QR.QNA_REPLY_GROUP_ORD
-		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY QNA_REPLY_GROUP_NO DESC, QNA_REPLY_GROUP_ORD ) AS QRNS, QNA_REPLY_NO, QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH,QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD
-		  		  FROM QNA_REPLY) QR
+		SELECT QNA_REPLY_NO, QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD
+		  FROM QNA_REPLY
 		 WHERE QNA_NO = #{qnaNo}
+		 ORDER BY QNA_REPLY_GROUP_NO DESC,  QNA_REPLY_GROUP_ORD
 	</select>
 	
 	<!-- 댓글 2번째 이상 삽입 -->
 	<insert id="insertQnaReplySecond" parameterType="QnaReplyDTO">
 		INSERT INTO QNA_REPLY
-			(QNA_REPLY_NO, QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
+			(QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
 		VALUES
-			(QNA_REPLY_NO_SEQ.NEXTVAL, #{qnaNo}, #{memberId}, #{qnaReplyContent}, SYSDATE, 1, #{qnaReplyDepth}, #{qnaReplyGroupNo}, #{qnaReplyGroupOrd})
+			(#{qnaNo}, #{memberId}, #{qnaReplyContent}, NOW(), 1, #{qnaReplyDepth}, #{qnaReplyGroupNo}, #{qnaReplyGroupOrd})
 	</insert>
 	
 	<!-- 댓글 삭제 -->

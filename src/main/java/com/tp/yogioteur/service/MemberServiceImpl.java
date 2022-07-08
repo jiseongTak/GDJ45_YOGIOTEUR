@@ -42,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired
 	private MemberMapper memberMapper;
 	
+	// 아이디확인
 	@Override
 	public Map<String, Object> idCheck(String memberId) {
 		Map<String, Object> map = new HashMap<>();
@@ -50,23 +51,26 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	
-	// 인증코드 발송
+	// 이메일 인증코드 발송
 	@Override
 	public Map<String, Object> sendAuthCode(String memberEmail) {
-		String authCode = SecurityUtils.authCode(6);  
+		
+		// 인증코드
+		String authCode = SecurityUtils.authCode(6);    // 6자리 인증코드
 		System.out.println(authCode);
 		
+		// 필수 속성
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com"); 
 		props.put("mail.smtp.port", "587");            
-		props.put("mail.smtp.auth", "true");           
-		props.put("mail.smtp.starttls.enable", "true"); 
+		props.put("mail.smtp.auth", "true");            
+		props.put("mail.smtp.starttls.enable", "true");
 		
-
+		// 메일을 보내는 사용자 정보
 		final String USERNAME = "forspringlec@gmail.com";
-		final String PASSWORD = "ukpiajijxfirdgcz";     
+		final String PASSWORD = "ukpiajijxfirdgcz";   
 		
-
+		// 사용자 정보를 javax.mail.Session에 저장
 		Session session = Session.getInstance(props, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -74,7 +78,9 @@ public class MemberServiceImpl implements MemberService {
 			}
 		});
 		
+	
 		try {
+			
 			Message message = new MimeMessage(session);
 			
 			message.setHeader("Content-Type", "text/plain; charset=UTF-8");
@@ -94,6 +100,7 @@ public class MemberServiceImpl implements MemberService {
 		return map;
 	}
 	
+	// 이메일 확인
 	@Override
 	public Map<String, Object> emailCheck(String memberEmail) {
 		
@@ -102,6 +109,7 @@ public class MemberServiceImpl implements MemberService {
 		return map;
 	}
 	
+	// 회원가입
 	@Override
 	public void signIn(HttpServletRequest request, HttpServletResponse response) {
 		String memberId = SecurityUtils.xss(request.getParameter("memberId"));        
@@ -148,7 +156,7 @@ public class MemberServiceImpl implements MemberService {
 			if(res == 1) {
 				out.println("<script>");
 				out.println("alert('회원 가입이 완료되었습니다.')");
-				out.println("location.href='" + request.getContextPath() + "'");
+				out.println("location.href='" + request.getContextPath() + "/member/loginPage'");
 				out.println("</script>");
 				out.close();
 			} else {
@@ -165,7 +173,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	
-
+	// 기본 로그인
 	@Override
 	public MemberDTO login(HttpServletRequest request) {
 		String memberId = SecurityUtils.xss(request.getParameter("memberId"));        
@@ -181,8 +189,6 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return loginMember;
 	}
-	
-
 	
 	// 아이디찾기
 	@Override
@@ -207,6 +213,7 @@ public class MemberServiceImpl implements MemberService {
 		return map;
 	}
 	
+	// 비밀번호 찾기 후, 재설정
 	@Override
 	public void changePw(HttpServletRequest request, HttpServletResponse response) {
 		String memberId = SecurityUtils.xss(request.getParameter("memberId"));
@@ -251,7 +258,7 @@ public class MemberServiceImpl implements MemberService {
 	public void changeMember(HttpServletRequest request, HttpServletResponse response) {
 
 		String memberId = SecurityUtils.xss(request.getParameter("memberId"));        
-		String memberName = request.getParameter("memberName");   
+		String memberName = SecurityUtils.xss(request.getParameter("memberName"));   
 		String memberPhone =request.getParameter("memberPhone");    
 		String memberBirth = request.getParameter("memberBirth");   
 		String memberGender = request.getParameter("memberGender");
@@ -337,7 +344,7 @@ public class MemberServiceImpl implements MemberService {
 		return memberMapper.selectSignOutMemberByMemberId(memberId);
 	}
 
-	
+	// 네이버 요청1
 	@Override
 	public void loginPage(HttpServletRequest request, Model model) {
 		
@@ -357,6 +364,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 	
+	// 네이버 요청2
 	@Override
 	public String getAccessToken(HttpServletRequest request, HttpServletResponse response) {
 		StringBuffer res = new StringBuffer();
@@ -393,7 +401,8 @@ public class MemberServiceImpl implements MemberService {
 		JSONObject obj = new JSONObject(res.toString());
 		return obj.getString("access_token");
 	}
-
+	
+	// 네이버 요청3
 	@Override
 	public MemberDTO getMemberProfile(HttpServletRequest request, HttpServletResponse response, String token) {
         String header = "Bearer " + token; 
@@ -429,14 +438,24 @@ public class MemberServiceImpl implements MemberService {
             	String id = profile.getString("id");
             	String name = profile.getString("name");
             	String email = profile.getString("email");
-            	String gender = profile.getString("gender");
             	String phone = profile.getString("mobile");
             	
+            	Map<String, String> userInfo = new HashMap<>();
+            	userInfo.put("id", profile.getString("id"));
+            	userInfo.put("name", profile.getString("name"));
+            	userInfo.put("email", profile.getString("email"));
+            	userInfo.put("phone", profile.getString("mobile"));
+            	
+            	Long no = memberMapper.selectNaverNo(userInfo);
+            	if(no == null) {
+            		no = memberMapper.insertNaverMember(userInfo);
+            	}
+            	memberMapper.insertNaverLog(no);
             	MemberDTO naver = MemberDTO.builder()
+            			.memberNo(no)
             			.memberId(id)
             			.memberName(name)
             			.memberEmail(email)
-            			.memberGender(gender)
             			.memberPhone(phone)
             			.build();
             	return naver;

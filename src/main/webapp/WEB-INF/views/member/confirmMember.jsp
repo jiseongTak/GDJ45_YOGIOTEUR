@@ -12,7 +12,6 @@
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
 //비밀번호 정규식
-
 $(function(){
 		fnPwCheck();
 		fnConfirm();

@@ -36,7 +36,7 @@ import net.coobird.thumbnailator.Thumbnails;
 @Service
 public class AdminServiceImpl implements AdminService {
 	
-	@Autowired private AdminMapper adminMapper;
+@Autowired private AdminMapper adminMapper;
 	
 	@Override
 	@Transactional

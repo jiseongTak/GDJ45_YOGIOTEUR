@@ -14,11 +14,11 @@
 <script>
 
 	$(function(){
-		fnTextareaLimit();
+		fnReviewReplyMLimit();
 		fnReviewReplyModifyCheck();
 	})
 	
-	function fnTextareaLimit(){
+	function fnReviewReplyMLimit(){
 		$('#replyContent').on('keyup', function(){
 			$('#replyContent_cnt').html("(" + $(this).val().length+" / 500)");
 			
@@ -57,7 +57,31 @@
 	
 </script>
 <style type="text/css">
-
+	.reviewReplyOne{
+		width : 850px;
+		margin : 0 auto;
+	}
+	
+	#replyContent {
+		 width: 850px;
+	  height: 200px;
+	  font-size: 15px;
+	  border: 0;
+	  border-radius: 10px;
+	  outline: none;
+	  padding-left: 10px;
+	  background-color: rgb(233, 233, 233);
+	  margin : 15px 0;
+	  padding : 10px;
+	}
+	
+	h1 {
+		text-align : center;
+	}
+	
+	#staro{
+		color : #ffd954;
+	}
 
 </style>
 
@@ -66,27 +90,35 @@
 
 	<jsp:include page="../layout/header.jsp"></jsp:include>
    
-   
-   <h1>댓글 수정하기</h1>
-   
-   	리뷰 번호 : ${review.reviewNo}<br>
-    예약번호 : ${review.reserNo}<br>
-    리뷰 제목 : ${review.reviewTitle}<br>
-    리뷰 내용 : ${review.reviewContent}<br>
-    작성일 : ${review.reviewCreated}<br>
-    별점 : ${review.reviewRevNo}<br>
-    
-    <c:forEach var="reImage" items="${reImage}">
-		<img alt="${reImage.reImageOrigin}" src="${contextPath}/review/display?reImageNo=${reImage.reImageNo}&reviewNo=${reImage.reviewNo}" width="300px">					
-	</c:forEach>
-   	
-	<form id="replyChangeData"  action="${contextPath}/review/reviewReplyChange" method="post">
-		<input type="hidden" name="replyNo" value="${reviewReply.replyNo}">		
-		<textarea rows="10" cols="50" id="replyContent" name="replyContent" >${reviewReply.replyContent}</textarea>
-		<div id="replyContent_cnt">(0 / 500)</div>
-		<button>댓글 수정</button>
-	</form>
-   
+   <div class="reviewReplyOne">
+	   <h1>댓글 수정하기</h1>
+	   
+	   
+	    리뷰 제목 : ${review.reviewTitle}<br>
+	    리뷰 내용 : ${review.reviewContent}<br>
+	    작성일 : ${review.reviewCreated}<br>
+	    <c:forEach var="i" begin="1" end="5">
+		   		<c:if test="${review.reviewRevNo ge i}">
+			   		<span id="staro">★</span>					
+			   	</c:if>
+			   	<c:if test="${review.reviewRevNo lt i}">
+				   	<span id="staro">☆</span>					
+			   	</c:if>	
+		   	</c:forEach>
+		    
+		   <br><br>
+	    
+	    <c:forEach var="reImage" items="${reImage}">
+			<img alt="${reImage.reImageOrigin}" src="${contextPath}/review/display?reImageNo=${reImage.reImageNo}&reviewNo=${reImage.reviewNo}" width="300px">					
+		</c:forEach>
+	   	
+		<form id="replyChangeData"  action="${contextPath}/review/reviewReplyChange" method="post">
+			<input type="hidden" name="replyNo" value="${reviewReply.replyNo}">		
+			<textarea rows="10" cols="50" id="replyContent" name="replyContent" >${reviewReply.replyContent}</textarea>
+			<div id="replyContent_cnt">(0 / 500)</div>
+			<button>댓글 수정</button>
+		</form>
+   </div>
 	<jsp:include page="../layout/footer.jsp"></jsp:include>
    
 </body>

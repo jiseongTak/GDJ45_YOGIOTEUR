@@ -6,13 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tp.yogioteur.domain.MemberDTO;
 import com.tp.yogioteur.domain.SignOutMemberDTO;
 
 public interface MemberService {
 	
+	// 회원가입
 	public Map<String, Object> idCheck(String memberId);
 	public Map<String, Object> sendAuthCode(String memberEmail);
 	public Map<String, Object> emailCheck(String memberEmail);
@@ -37,7 +37,7 @@ public interface MemberService {
 	// 탈퇴확인
 	public SignOutMemberDTO findSignOutMember(String memberId);
 	
-	// 네이버api
+	// 네이버api(1,2,3)
 	public void loginPage(HttpServletRequest request, Model model);
 	public String getAccessToken(HttpServletRequest request, HttpServletResponse response);
 	public MemberDTO getMemberProfile(HttpServletRequest request, HttpServletResponse response, String token);

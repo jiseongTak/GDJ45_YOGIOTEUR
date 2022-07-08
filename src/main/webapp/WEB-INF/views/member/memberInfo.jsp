@@ -55,22 +55,14 @@
 			}
 			return true;
 		})
-		$('#modifyPwForm').on('submit', function(event){
-			if(pwPass == false || rePwPass == false){
-				alert('비밀번호를 확인하세요.');
-				event.preventDefault();
-				return false;
-			}
-			return true;
-		})
 	}
 	
 	let phonePass = false;
 	function fnPhoneCheck(){
 		$('#memberPhone').on('keyup', function(){
-			let regPhone = /^[0-9]{1,11}$/;
+			let regPhone = /^\d{2,3}-\d{3,4}-\d{4}$/;
 			if(regPhone.test($('#memberPhone').val())==false){
-				$('#memberPhoneMsg').text('전화번호는 -없이 숫자로만 입력해주세요.').addClass('dont').removeClass('ok');
+				$('#memberPhoneMsg').text('전화번호는 -(하이픈)포함 입력해주세요.').addClass('dont').removeClass('ok');
 				phonePass = false;
 			} else {
 				$('#memberPhoneMsg').text('');
@@ -103,7 +95,6 @@
 			})
 		})
 	}
-
 	
 	function fnPostcode() {
         new daum.Postcode({
@@ -115,34 +106,6 @@
         }).open();
     }
 	
-	let pwPass = false;
-	function fnPwCheck(){
-		$('#memberPw').on('keyup', function(){
-			let regPw = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,12}$/; 
-			if(regPw.test($('#memberPw').val())==false){
-				$('#pwMsg').text('영문 소문자, 숫자, 특수문자 포함 8~12자로 입력해주세요.').addClass('dont').removeClass('ok');
-				pwPass = false;
-			} else {
-				$('#pwMsg').text('사용 가능한 비밀번호입니다.').addClass('ok').removeClass('dont');
-				pwPass = true;
-			}
-		})
-	}
-	
-
-	let rePwPass = false;
-	function fnPwConfirm(){
-		$('#memberRePw').on('keyup', function(){
-			if($('#memberRePw').val() != '' && $('#memberPw').val() != $('#memberRePw').val()){
-				$('#rePwMsg').text('비밀번호를 확인하세요.').addClass('dont').removeClass('ok');
-				rePwPass = false;
-			} else {
-				$('#rePwMsg').text('');
-				rePwPass = true;
-			}
-		})
-	}
-	
 </script>
 </head>
 <body>
@@ -152,8 +115,7 @@
 	<ul>
 		<li><a href="${contextPath}/member/memberInfo">내정보</a></li>
 		<li><a href="${contextPath}/member/modifyPwPage">비밀번호 변경</a></li>
-		<li><a href="${contextPath}/member/confoirmReserPage">예약내역</a></li>
-		<li><a href="${contextPath}/member/confirmQnaPage">문의내역</a></li>
+		<li><a href="${contextPath}/member/confirmReserPage">예약내역</a></li>
 	</ul>
 	
 	<br>
@@ -165,17 +127,17 @@
 				생년월일
 				<input type="text" name="memberBirth" id="memberBirth" value="${loginMember.memberBirth}" readonly="readonly"><br>
             	연락처
-            	<input type="text" name="memberPhone" id="memberPhone" value="${loginMember.memberPhone}" maxlength="11"><br>
+            	<input type="text" name="memberPhone" id="memberPhone" value="${loginMember.memberPhone}" maxlength="13"><br>
 				<span id="memberPhoneMsg"></span>
 				주소<br>
 				<input type="text" id="memberPostcode" name="memberPostCode" value="${loginMember.memberPostCode}">
 				<input type="button" onclick="fnPostcode()" value="우편번호 찾기"><br>
 				<input type="text" id="memberRoadAddress" name="memberRoadAddr" value="${loginMember.memberRoadAddr}"><br>
 				성별
-				<label>남
+				<label>Male
 					<input type="radio" name="memberGender" value="male" <c:if test="${loginMember.memberGender eq 'male'}">checked="checked"</c:if>/>
 				</label>
-				<label>여
+				<label>Female
 				<input type="radio" name="memberGender" value="female" <c:if test="${loginMember.memberGender eq 'female'}">checked="checked"</c:if>/>
 				</label>
 				<br>
@@ -196,80 +158,6 @@
 				<input type="button" value="회원탈퇴" onclick="location.href='${contextPath}/member/confirm'">
             </form>
     </div>
-    </div>
-    
-    <hr>
-    
-    <div class="container">
-    	<h3>비밀번호 변경</h3>
-        <p>주기적인 비밀번호 변경을 통해 개인정보를 안전하게 보호하세요.</p>
-			<form id="modifyPwForm" action="${contextPath}/member/modifyPw" method="post">
-				<input type="password" name="memberPw" id="memberPw" placeholder="새 비밀번호"><br>
-				<span id="pwMsg"></span><br>
-				<input type="password" id="memberRePw" placeholder="새 비밀번호 확인"><br>
-				<span id="rePwMsg"></span><br>
-				<input type="hidden" name="memberId" value="${loginMember.memberId}">
-				<button>변경</button>
-				<input type="button" value="취소" onclick="location.href='${contextPath}/'">
-			</form>
-    </div>
-    
-    <hr>
-    
-    <div class="container">
-       <h3>예약 확인</h3>
-			<table class="reser" border="1">
-				<thead>
-					<tr>
-						<td>예약번호</td>
-						<td>객실이름</td>
-						<td>회원이름</td>
-						<td>체크인날짜</td>
-						<td>체크아웃날짜</td>
-						<td>예약인원</td>
-						<td>예약상태</td>
-						<td>예약취소</td> <!--  -->
-					</tr>
-				</thead>
-				<tbody id="confirmReser">
-					<c:forEach items="${reservations}" var="reservation"> <!--  -->
-						<tr>
-							<td>${reservation.reserNo}</td>
-							<td>${reservation.roomNo}</td>
-							<td>${loginMember.memberName}</td>
-							<td>${reservation.reserCheckin}</td>
-							<td>${reservation.reserCheckout}</td>
-							<td>${reservation.reserPeople}</td>
-							<td>예약상태</td>
-							<td><input type="button" value="예약취소" onclick="location.href='${contextPath}/reservation/reservationCancel?reserNo=${reservation.reserNo}'"></td>
-						</tr>
-					</c:forEach> <!--  -->
-				</tbody>
-			</table>
-    </div>
-
-	<hr>
-	
-	<div class="content">
-		<h3>문의내역 확인</h3>
-			<table class="fag" border="1">
-				<thead>
-					<tr>
-						<td>게시글번호</td>
-						<td>제목</td>
-						<td>작성일</td>
-					</tr>
-				</thead>
-				<tbody id="confirmFaq">
-						<tr>
-							<td>${faq.faqNo}</td>
-							<td>${faq.faqTitle}</td>
-							<td>${faq.faqCreated}</td>
-						</tr>
-				</tbody>
-			</table>
-		</div>
-
 
 	
 </body>

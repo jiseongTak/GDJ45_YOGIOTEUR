@@ -32,7 +32,56 @@
   }
  	
 </script>
-
+<style>
+  table {
+    width: 1200px;
+    margin : 0 auto;
+    border-top: 1px solid #444444;
+    border-collapse: collapse;
+  }
+  th, td {
+    border-bottom: 1px solid #444444;
+    padding: 10px;
+    text-align : center;
+  }
+  
+  thead tr {
+    background-color: rgb(233, 233, 233);
+    
+  }
+  
+  .qnaNameA{
+  	color : black;
+  }
+  
+  h1 {
+  	text-align : center;
+  }
+  
+  .qnaAddA {
+ 	 color : black;
+ 	 margin : 400px;
+  }
+  
+  .unlink, .link {
+		display: inline-block;  /* 같은 줄에 둘 수 있고, width, height 등 크기 지정 속성을 지정할 수 있다. */
+		padding: 10px;
+		margin: 5px;
+		border: 1px solid white;
+		text-align: center;
+		text-decoration: none;  /* 링크 밑줄 없애기 */
+		color: gray;
+	}
+	.link:hover {
+		border: 1px solid orange;
+		color: limegreen;
+	}
+	
+	.paging{
+		text-align: center;
+	}
+  
+</style>
 </head>
 <body>
    
@@ -45,8 +94,8 @@
 	   	로그인 후 작성가능합니다.
    </c:if> 
    <c:if test = "${loginMember.memberId ne null}">
-	   	<a href="${contextPath}/qna/qnaSavePage">새글작성</a>
-   </c:if> 
+	   	<a class="qnaAddA" href="${contextPath}/qna/qnaSavePage">새글작성</a>
+   </c:if>
   
   <hr>
   
@@ -56,6 +105,7 @@
   			<td>제목</td>
   			<td>작성자</td>
   			<td>작성일자</td>
+  			<td>조회수</td>
   			<c:if test = "${loginMember.memberId ne null}">
   			<td>삭제</td>
   			</c:if>
@@ -64,19 +114,20 @@
   	<tbody>
   			<c:forEach items="${qnas}" var="qna">
 	  				<tr id="qna_${qna.qnaNo}">
-	  					<td><a href="${contextPath}/qna/qnaDetailPage?qnaNo=${qna.qnaNo}">${qna.qnaTitle}</a></td>
+	  					<td><a class="qnaNameA" href="${contextPath}/qna/qnaDetailPage?qnaNo=${qna.qnaNo}">${qna.qnaTitle}</a></td>
 	  					<td>${qna.memberId}</td>
 	  					<td>${qna.qnaCreated}</td>
-	  					
+	  					<td>${qna.qnaHit}</td>	  					
+	  					<c:if test = "${loginMember.memberId eq qna.memberId || loginMember.memberId eq 'admin12'}">
 	  						<td><input type="button" value="삭제" data-qna_no = "${qna.qnaNo}" onclick="fnRemove(this)"></td>
-	  					
+	  					</c:if>
 	  				</tr>
   			</c:forEach>
   		
   	</tbody>
   </table>
   
-  	<div>${paging}</div>
+  	<div class="paging">${paging}</div>
   	
   	<jsp:include page="../layout/footer.jsp"></jsp:include>
   	

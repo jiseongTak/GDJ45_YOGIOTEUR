@@ -18,7 +18,7 @@ public class UpdateStatus {
 	@Autowired
 	private AdminMapper adminMapper;
 	
-	//오늘 날짜보다 체크아웃날짜가 전이면 roomStatus를 0(예약 가능)으로 바꿈
+	//오늘 날짜보다 객실의 체크아웃날짜가 전이면 roomStatus를 0(예약 가능)으로 바꿈
 	@Scheduled(cron = "0 0 0 1/1 * *") //매일 0시에 동작
 	public void execute() {
 		

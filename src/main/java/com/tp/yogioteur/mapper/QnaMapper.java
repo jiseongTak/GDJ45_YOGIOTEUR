@@ -14,7 +14,8 @@ public interface QnaMapper {
 	// 목록가져오기
 	public List<QnaDTO> selectQnaList(Map<String, Object> map);
 	public int selelctQnaCount();
-	public int updateQnaHit(Long qnaNo);
+	public int updateQnaHit(Long qnaNo); // 조회수
+	public int updateQnaHitnotD(Long qnaNo); // 조회수
 	
 	
 	// 디테일 정보 가져오기

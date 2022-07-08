@@ -17,6 +17,8 @@ public interface ReviewService {
 		// 사진 목록(사진보기)
 		public ResponseEntity<byte[]> display(Long reImageNo, String type);
 		
+		// 예약한 방 알아오기
+		public void ReviewReservation(Long roomNo, Model model);
 		
 		// 리뷰 삽입
 		public void ReviewSave(MultipartHttpServletRequest multipartRequest, HttpServletResponse response);

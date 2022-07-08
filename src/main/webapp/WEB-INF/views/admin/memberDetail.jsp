@@ -25,8 +25,8 @@
 					var tr = '<tr>';
 					tr += '<td>' + reservation.reserNo + '</td>';
 					tr += '<td>' + reservation.roomNo + '</td>';
-					tr += '<td>' + formatDate(reservation.reserCheckin) + '</td>';
-					tr += '<td>' + formatDate(reservation.reserCheckout) + '</td>';
+					tr += '<td>' + reservation.reserCheckIn + '</td>';
+					tr += '<td>' + reservation.reserCheckOut + '</td>';
 					tr += '<td>' + reservation.reserPeople + '</td>';
 					tr += '</tr>';
 					$('#items').append(tr);

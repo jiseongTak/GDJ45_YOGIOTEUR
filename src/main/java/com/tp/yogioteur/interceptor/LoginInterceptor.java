@@ -32,7 +32,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
 			out.println("<script>");
-			out.println("alert('이미 탈퇴된 회원입니다.')");
+			out.println("alert('탈퇴된 회원입니다.')");
 			out.println("location.href='" + request.getContextPath() + "'");
 			out.println("</script>");
 			return false;

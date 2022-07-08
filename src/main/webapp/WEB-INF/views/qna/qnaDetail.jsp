@@ -18,44 +18,154 @@
 	$(function(){
 		
 		$('.reply_link').on('click', function(){
-			$('.reply_form').addClass('blind');
-	    	$(this).parent().parent().next().removeClass('blind');
+			//$('.reply_form').addClass('blind');
+	    	$(this).parent().parent().next().toggleClass('blind');
 		});
+		
+		fnTextareaLimitQnaReply();
+		fnQnaReplyCheck();
 	})
 	
+	function fnTextareaLimitQnaReply(){
+		$('#qnaReplyContent').on('keyup', function(){
+			$('#qnaReplyContent_cnt').html("(" + $(this).val().length+" / 300)");
+			
+			if($(this).val().length > 300){
+				$(this).val($(this).val().substring(0,300));
+				$('#qnaReplyContent_cnt').html("(300 / 300)" );
+			}
+			
+		})
+		
+		$('#qnaReplyContentAdd').on('keyup', function(){
+			$('#qnaReplyContentAdd_cnt').html("(" + $(this).val().length+" / 300)");
+			
+			if($(this).val().length > 300){
+				$(this).val($(this).val().substring(0,300));
+				$('#qnaReplyContentAdd_cnt').html("(300 / 300)" );
+			}
+			
+		})
+		
+		
+	}
 	
+	function fnQnaReplyCheck(){
+		
+		$('#qnaReplyData').on('submit', function(ev){
+			
+			if($('#qnaReplyContent').val() == ''){
+				alert('댓글을 작성해주세요');
+				ev.preventDefault();
+				return false;
+			} 
+			return true;
+		})
+		
+		$('#replyadd').on('submit', function(ev){
+			 
+			if($('#qnaReplyContentAdd').val() == ''){
+				alert('댓글을 작성해주세요');
+				ev.preventDefault();
+				return false;
+			}
+			return true;
+		})
+	}
     
+	function fnRemoveA(qnaReplyNo, qnaNo){      
+		
+        if(confirm('게시글을 삭제할까요?')){
+           location.href='${contextPath}/qnaReply/qnaReplyRemove?qnaReplyNo=' + qnaReplyNo +'&qnaNo=' +qnaNo;
+        }
+  }
+	
+
+	
 </script>
+
 <style>
 	.blind {
 		display: none;
 	}
+	
+	
+	.qnaDtailA{
+		color : blue;
+	}
+	.qnaDetailOne{
+		width : 850px;
+		margin : 0 auto;
+	
+	}
+	
+	h1 {
+		text-align : center;
+	}
+	
+	#qnaReplyContent{
+	  width: 850px;
+	  height: 100px;
+	  font-size: 15px;
+	  border: 0;
+	  border-radius: 10px;
+	  outline: none;
+	  padding-left: 10px;
+	  background-color: rgb(233, 233, 233);
+	  margin : 15px auto;
+	  padding : 10px;
+	  
+	}
+	
+	.qnaReplyContent_cnt{
+		text-align : right;
+	}
+	
+	.reply_link {
+		color : green;
+	}
+	
+	
+	
 </style>
 </head>
 <body>
    
+   <jsp:include page="../layout/header.jsp"></jsp:include>
+   
+   <div class="qnaDetailOne">
+   
 	  <h1>QnA 상세보기</h1>
 	  
-	  <a href="${contextPath}/qna/qnaList">목록으로</a>
+	  <a class="qnaDtailA" href="${contextPath}/qna/qnaList">목록으로</a>
 	  
 	  
 	  <hr>
 		
 		 	
-		  		번호 	: ${qna.qnaNo}<br>
-		  		제목	: ${qna.qnaTitle}<br>
-		  		아이디 	: ${qna.memberId}<br>
-		  		내용 	: ${qna.qnaContent}<br>
+		  		<c:if test="${qna.qnaCreated < qna.qnaModified}<br>">
+		  			수정일 : ${qna.qnaModified}<br>
+		  		</c:if>
+		  		제목	: ${qna.qnaTitle}
+		  		작성일 	: ${qna.qnaCreated}<br>
+		  		조회수  : ${qna.qnaHit}<br><br>
+		  		아이디 	: ${qna.memberId}<br><br>
+		  		내용 	: ${qna.qnaContent}<br><br><br>
 		 		
-		 		<a href="${contextPath}/qna/qnaUpdatePage?qnaNo=${qna.qnaNo}">수정하기</a>
+		 		<c:if test="${loginMember.memberId eq qna.memberId}">	 		
+			 		<a class="qnaDtailA"  href="${contextPath}/qna/qnaUpdatePage?qnaNo=${qna.qnaNo}">수정하기</a>
+		 		</c:if>
 		 	
 		 	<br><br>
 		 	
 		 	<form id="qnaReplyData" method="post" action="${contextPath}/qnaReply/qnaReplySave">
 		 		<input type="hidden" name="qnaNo" value="${qna.qnaNo}">
 			  	<input type="hidden" name="memberId" value="${loginMember.memberId}">		  
-			  	<textarea rows="10" cols="50" name="qnaReplyContent"></textarea>
-			  	<button>댓글 달기</button>
+			  	<textarea rows="10" cols="50" id="qnaReplyContent" name="qnaReplyContent"></textarea><br>
+			  	<div class ="qnaReplyContent_cnt">
+				  	<div id="qnaReplyContent_cnt">(0 / 300)</div><br>
+				  	<button>댓글 달기</button>
+			  	</div>
 			</form>
 		 	
 			
@@ -88,25 +198,26 @@
 									${qnaReply.qnaReplyContent}
 								</c:if>
 								<!-- 답글달기(if 있으면 1단 댓글만 허용, if 없으면 다단 댓글 허용) -->
-								<%-- <c:if test="${fb.depth eq 0}"> --%>
-									<a class="reply_link">답글</a>								
+								<a class="reply_link">답글</a>	
+													
 							</td>
 							<td>${qnaReply.qnaReplyCreated}</td>
 							<td>
-								${qnaReply.qnaReplyNo}
-									<a href="${contextPath}/qnaReply/qnaReplyRemove?qnaReplyNo=${qnaReply.qnaReplyNo}">
-										<i class="fa-solid fa-trash-can"></i>
-									</a>
-										
+								<c:if test = "${loginMember.memberId eq qnaReply.memberId || loginMember.memberId eq 'admin12'}">
+									
+							
+									<td><input type="button" value="삭제" onclick="fnRemoveA(${qnaReply.qnaReplyNo}, ${qna.qnaNo})"></td>
+								</c:if>
 									
 							</td>
 						</tr>
 						<tr class="reply_form blind">
 							<td >
-								<form action="${contextPath}/qnaReply/qnaReplySaveSecond" method="post">
+								<form id="replyadd" action="${contextPath}/qnaReply/qnaReplySaveSecond" method="post">
 									<input type="hidden" name="qnaNo" value="${qna.qnaNo}" >
 									<input type="text" name="memberId" value="${loginMember.memberId}" size="7" readonly>
-									<input type="text" name="qnaReplyContent">
+									<input type="text" id="qnaReplyContentAdd" name="qnaReplyContent">
+									<div id="qnaReplyContentAdd_cnt">(0 / 300)</div>
 					
 									<!-- 원글의 Depth, GroupNo, GroupOrd -->
 									<input type="hidden" name="qnaReplyDepth" value="${qnaReply.qnaReplyDepth}">
@@ -128,13 +239,13 @@
 		 			
 		 			
 				   			
-				   		
+		</div>		   		
 		 		 	
 		 			
 					
 		 
 	   <br><br>
-	  
+	  <jsp:include page="../layout/footer.jsp"></jsp:include>
 	  	
 	    
   		

@@ -26,5 +26,9 @@ public interface RoomMapper {
 	/*
 	 * //상세 이미지 public ImageDTO detailImageByNo(Long imageNo);
 	 */
+	public int updateRoomStatusOff(Long roomNo);
+	public int updateRoomStatusOn(Long roomNo);
 	
+	public RoomDTO reservationReviewRoomName(Long roomNo);
+
 }

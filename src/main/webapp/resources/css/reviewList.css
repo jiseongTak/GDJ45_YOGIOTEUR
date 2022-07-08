@@ -1,10 +1,67 @@
 @charset "UTF-8";
 
-	.reviewbox {
-		background-color : #fff;
-		width: 850px;
+
+
+	.rivewListTitle{
+		text-align: center;
+		margin-top : 30px;
+	}
+	
+	.reviewListView{
+		width: 750px;
+		margin : auto;
+		padding : 30px;
+	}
+	
+	#ReviewListONE{
+		margin-bottom : 30px;
+		padding-bottom: 30px;
+		border-bottom :  1px solid gainsboro;
+	
+	}
+	
+	.adminReply {
+		
+	    background-color : #e1dcd9;
+	    margin-top : 10px;
+	    margin-left : 50px;
+	    margin-right: 30px;
+	    text-align : center;
+	    border-radius: 10px;
+	    padding : 30px 20px;
+	
+	}
+	
+	.usericon {
+		color : #e1dcd9;
+	}
+	
+	.reviewTitleName{
+	  font-size: 30px;
+	
+	}
+	
+	.ReviewNomal {
+		margin-left : 50px;
+	
+	}
+	
+	#staro{
+		color : #ffd954;
+		font-size : 20px;
+	}
+	
+	.adminicon{
+		text-align : right;
 		
 	}
+	
+	.addRe {
+		color : gray;
+	}
+	
+	
+	/*
 	#addRe{
 		text-decoration: none;
 		color: black;
@@ -17,15 +74,15 @@
 		text-align : center;
 	}
 	
-	h1 {
-		
+	.ab {
+	 text-align : center;
 	}
-	#ReviewListONE{
-		width: 850px;
+	
+	
+	.reviewListView{
+		width: 1200px;
 		margin : 0 auto;
 		
 
 	}
-	#staro{
-		color : #ffd954;
-	}
+	*/

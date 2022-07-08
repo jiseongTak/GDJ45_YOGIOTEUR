@@ -35,18 +35,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="checkInRoomList" parameterType="Map" resultType="RoomDTO">
 		<![CDATA[
 		SELECT ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE 
-		  FROM ROOM
-		 WHERE TO_DATE(ROOM_CHECKIN, 'YY/MM/DD') <= TO_DATE(#{roomCheckIn},'YYYY/MM/DD')
-		   AND TO_DATE(ROOM_CHECKOUT, 'YY/MM/DD') >= TO_DATE(#{roomCheckOut},'YYYY/MM/DD')
-	 	   AND ROOM_STATUS = 0
+			  FROM ROOM
+			 WHERE ROOM_CHECKIN <= #{roomCheckIn} AND ROOM_CHECKOUT >= #{roomCheckOut} AND ROOM_STATUS = 0;
 		 ]]>
 	</select>
 		
 	<select id="selectImageByNo" parameterType="Long" resultType="ImageDTO">
-		SELECT ROOM_NO, IMAGE_NO, IMAGE_ORIGIN, IMAGE_PATH, IMAGE_SAVED
+			SELECT ROOM_NO, IMAGE_NO, IMAGE_ORIGIN, IMAGE_PATH, IMAGE_SAVED
 		  FROM IMAGE
 		 WHERE ROOM_NO = #{roomNo}
-		   AND ROWNUM = 1
+	  ORDER BY ROOM_NO limit 1;
 	</select>	
 	
 	<select id="selectRoomTypeByNo" parameterType="Long" resultMap="RoomDTOMap">
@@ -55,5 +53,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		    ON R.RT_NO = T.RT_NO
 		 WHERE R.ROOM_NO = #{roomNo}
 	</select>
+	
+	<update id="updateRoomStatusOff" parameterType="RoomDTO"> 
+		UPDATE ROOM
+		   SET ROOM_STATUS = 1
+		 WHERE ROOM_NO = #{roomNo} 
+	</update>
+
+	<update id="updateRoomStatusOn" parameterType="RoomDTO"> 
+		UPDATE ROOM
+		   SET ROOM_STATUS = 0
+		 WHERE ROOM_NO = #{roomNo} 
+	</update>
+	
+	<select id="reservationReviewRoomName" parameterType="Long" resultMap="RoomDTOMap">
+      SELECT ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT
+        FROM ROOM
+       WHERE ROOM_NO = #{roomNo}
+   </select>
+	
 	
 </mapper>

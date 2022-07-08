@@ -13,10 +13,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 리뷰 목록보기 -->
 	<select id="selectReviewList" parameterType="Map" resultType="ReviewDTO">
-		SELECT C.RNC, C.REVIEW_NO, C.MEMBER_ID, C.RESER_NO, C.REVIEW_TITLE, C.REVIEW_CONTENT, C.REVIEW_CREATED,C.REVIEW_MODIFIED, C.REVIEW_REV_NO
-		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY REVIEW_NO DESC) AS RNC, REVIEW_NO, MEMBER_ID, RESER_NO, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED,REVIEW_MODIFIED, REVIEW_REV_NO
-		  		  FROM REVIEW) C
-		 WHERE C.RNC BETWEEN #{beginRecord} AND #{endRecord}  		  
+		SELECT  REVIEW_NO, MEMBER_ID, RT_TYPE, ROOM_NAME, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED,REVIEW_MODIFIED, REVIEW_REV_NO
+		  FROM REVIEW
+		  ORDER BY REVIEW_NO DESC
+		 LIMIT #{beginRecord}, #{recordPerPage}
+		  
 	</select>
 	
 	<!-- 리뷰하나사진 여ㄹ개 보기 -->
@@ -28,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<!-- 리뷰 하나 정보 -->
 	<select id="selectReviewByNo" parameterType="Long" resultType="ReviewDTO">
-		SELECT REVIEW_NO, MEMBER_ID, RESER_NO, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED,REVIEW_MODIFIED, REVIEW_REV_NO
+		SELECT REVIEW_NO, MEMBER_ID, RT_TYPE, ROOM_NAME, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED,REVIEW_MODIFIED, REVIEW_REV_NO
 		  FROM REVIEW
 		 WHERE REVIEW_NO = #{reviewNo}
 	</select>
@@ -36,22 +37,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<!-- 리뷰 추가 -->
 	<insert id="insertReview" parameterType="ReviewDTO">
-		<selectKey keyProperty="reviewNo" resultType="Long" order="BEFORE">
-			SELECT REVIEW_NO_SEQ.NEXTVAL
-			  FROM DUAL
+		<selectKey keyProperty="reviewNo" resultType="Long" order="AFTER">
+			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO REVIEW
-			(REVIEW_NO, MEMBER_ID, RESER_NO, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED, REVIEW_MODIFIED, REVIEW_REV_NO)
+			(REVIEW_NO, MEMBER_ID, RT_TYPE, ROOM_NAME, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_CREATED, REVIEW_MODIFIED, REVIEW_REV_NO)
 		VALUES
-			(#{reviewNo}, #{memberId}, RESER_NO_SEQ.NEXTVAL, #{reviewTitle}, #{reviewContent}, SYSDATE, SYSDATE, #{reviewRevNo})
+			(#{reviewNo}, #{memberId}, #{rtType},#{roomName}, #{reviewTitle}, #{reviewContent}, NOW(), NOW(), #{reviewRevNo})
 	</insert>
 	
 	<!-- 리뷰 이미지 저장 -->
 	<insert id="insertReImage" parameterType="ReImageDTO">
 		INSERT INTO RE_IMAGE
-			(RE_IMAGE_NO, REVIEW_NO, RE_IMAGE_PATH, RE_IMAGE_SAVED, RE_IMAGE_ORIGIN)
+			(REVIEW_NO, RE_IMAGE_PATH, RE_IMAGE_SAVED, RE_IMAGE_ORIGIN)
 		VALUES
-			(RE_IMAGE_NO_SEQ.NEXTVAL, #{reviewNo}, #{reImagePath}, #{reImageSaved}, #{reImageOrigin})
+			(#{reviewNo}, #{reImagePath}, #{reImageSaved}, #{reImageOrigin})
 	</insert>
 	
 	<!-- 리뷰 삭제 -->
@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 리뷰 수정 -->
 	<update id="updateReview" parameterType="ReviewDTO">
 		UPDATE REVIEW
-		   SET REVIEW_TITLE = #{reviewTitle}, REVIEW_CONTENT = #{reviewContent} , REVIEW_MODIFIED = SYSDATE ,REVIEW_REV_NO=#{reviewRevNo}
+		   SET REVIEW_TITLE = #{reviewTitle}, REVIEW_CONTENT = #{reviewContent} , REVIEW_MODIFIED = NOW() ,REVIEW_REV_NO=#{reviewRevNo}
 		 WHERE REVIEW_NO = #{reviewNo}
 	</update>
 	

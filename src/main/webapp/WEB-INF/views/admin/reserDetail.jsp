@@ -48,22 +48,35 @@
 	
 </script>
 <style type="text/css">
-	
+	.item {
+		border: 1px solid;
+		margin: 10% 15%;
+		padding: 20px;
+	}
+	h3 {
+		text-align: center;
+	}
+	.btn {
+		text-align: center;
+	}
 </style>
 </head>
 <body>
 	
-    <form>
-        예약번호: ${reservation.reserNo}<br>
-        객실번호: ${room.roomNo}<br>
-        체크인: ${reservation.reserCheckIn}<br>
-        체크아웃: ${reservation.reserCheckOut}<br>
-        예약자 이름: ${member.memberName}<br>
-        예약자 아이디: ${member.memberId}<br>
-        예약자 전화번호: ${member.memberPhone}<br>
-        <input type="button" id="btnRemove" value="예약 내역 삭제">
-        <input type="button" id="close" value="닫기">
-    </form>
-	
+   	<div class="item">
+   		<h3>예약 내역</h3>
+		예약번호: ${reservation.reserNo}<br><br>
+		객실번호: ${room.roomNo}<br><br>
+		체크인: ${reservation.reserCheckIn}<br><br>
+		체크아웃: ${reservation.reserCheckOut}<br><br>
+		예약자 이름: ${member.memberName}<br><br>
+		예약자 아이디: ${member.memberId}<br><br>
+		예약자 전화번호: ${member.memberPhone}<br><br>
+		<div class="btn">
+			<input type="button" id="btnRemove" value="예약 삭제">
+			<input type="button" id="close" value="닫기">
+		</div>
+	</div>
+		
 </body>
 </html>

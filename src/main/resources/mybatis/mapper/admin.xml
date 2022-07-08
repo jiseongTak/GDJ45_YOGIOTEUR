@@ -6,15 +6,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.tp.yogioteur.mapper.AdminMapper">
 
 	<insert id="insertRoom" parameterType="RoomDTO" useGeneratedKeys="true" keyProperty="roomNo">
-		<!-- <selectKey keyProperty="roomNo" resultType="Long" order="AFTER">
-			SELECT MAX(ROOM_NO) FROM ROOM
-		</selectKey> -->
 		INSERT INTO ROOM
 			(RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
 		VALUES
 			(#{rtNo}, #{roomName}, #{roomStatus}, NOW(), #{roomCheckOut}, #{roomPrice})
 	</insert>
-	<insert id="insertImage" parameterType="ImageDTO" useGeneratedKeys="true" keyProperty="imageNo">
+	<insert id="insertImage" parameterType="ImageDTO">
 		INSERT INTO IMAGE
 			(ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
 		VALUES
@@ -39,11 +36,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<select id="selectRoomList" parameterType="Map" resultMap="RoomMap">
-		SELECT A.ROOM_NO, A.RT_NO, A.ROOM_NAME, A.ROOM_STATUS, A.ROOM_CHECKIN, A.ROOM_CHECKOUT, A.ROOM_PRICE, A.RT_TYPE, A.RT_MAX
-	      FROM (SELECT ROW_NUMBER() OVER(ORDER BY R.ROOM_NO DESC) AS ROW_NUM, R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
-			      FROM ROOM R INNER JOIN ROOM_TYPE T
-			        ON R.RT_NO = T.RT_NO) A
-	     WHERE A.ROW_NUM BETWEEN #{beginRecord} AND #{endRecord}
+		SELECT R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
+		  FROM ROOM R INNER JOIN ROOM_TYPE T
+			ON R.RT_NO = T.RT_NO
+		 ORDER BY R.ROOM_NO
+	     LIMIT #{beginRecord}, #{recordPerPage}
 	</select>
 	
 	<select id="selectRoomCount" resultType="Integer">
@@ -103,10 +100,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 회원 -->
 	<select id="selectMemberList" parameterType="Map" resultType="MemberDTO">
-		SELECT A.MEMBER_NO, A.MEMBER_NAME, A.MEMBER_EMAIL, A.MEMBER_ID, A.MEMBER_PHONE, A.MEMBER_BIRTH, A.SIGN_IN
-		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY MEMBER_NO DESC) AS ROW_NUM, MEMBER_NO, MEMBER_NAME, MEMBER_EMAIL, MEMBER_ID, MEMBER_PHONE, MEMBER_BIRTH, SIGN_IN
-		  	      FROM MEMBER) A
-		  WHERE A.ROW_NUM BETWEEN #{beginRecord} AND #{endRecord}
+		SELECT MEMBER_NO, MEMBER_NAME, MEMBER_EMAIL, MEMBER_ID, MEMBER_PHONE, MEMBER_BIRTH, SIGN_IN
+		  FROM MEMBER
+		 ORDER BY MEMBER_NO DESC
+		 LIMIT #{beginRecord}, #{recordPerPage}
 	</select>
 	
 	<select id="selectMemberCount" resultType="Integer">
@@ -122,10 +119,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	
 	<!-- 예약 -->
-	<select id="selectReservationList" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_STATUS
-		  FROM RESERVATION
-		 ORDER BY RESER_NO DESC
+	<select id="selectReservationList" resultMap="ReservationMap">
+		SELECT R.RESER_NO, R.RESER_CHECKIN, R.RESER_CHECKOUT, R.RESER_PEOPLE, R.RESER_STATUS, R.RESER_FOOD
+			 , M.MEMBER_NO, M.MEMBER_NAME, M.MEMBER_ID, M.MEMBER_PHONE
+			 , RO.ROOM_NO, RO.ROOM_NAME, RO.ROOM_PRICE
+		  FROM RESERVATION R INNER JOIN MEMBER M ON (R.MEMBER_NO = M.MEMBER_NO)
+		  					 INNER JOIN ROOM RO ON (R.ROOM_NO = RO.ROOM_NO)
 	</select>
 	
 	<select id="selectReservationCount" resultType="Integer">
@@ -157,7 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE MEMBER_NO = #{memberNo}
 	</select>
 	
-	<select id="selectReservationByReserNo" parameterType="Long" resultMap="ReservationMap">
+	<select id="selectReservationByReserNo" parameterType="String" resultMap="ReservationMap">
 		SELECT R.RESER_NO, R.RESER_CHECKIN, R.RESER_CHECKOUT, R.RESER_PEOPLE, R.RESER_STATUS, R.RESER_FOOD
 			 , M.MEMBER_NO, M.MEMBER_NAME, M.MEMBER_ID, M.MEMBER_PHONE
 			 , RO.ROOM_NO, RO.ROOM_NAME, RO.ROOM_PRICE
@@ -166,15 +165,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE R.RESER_NO = #{reserNo}
 	</select>
 	
-	<delete id="deleteReservation" parameterType="Long">
+	<delete id="deleteReservation" parameterType="String">
 		DELETE
 		  FROM RESERVATION
 		 WHERE RESER_NO = #{reserNo}
 	</delete>
 	
-	<update id="updateRoomStatus" parameterType="Long">
+	<update id="updateRoomStatusSet0" parameterType="Long">
 		UPDATE ROOM
 		   SET ROOM_STATUS = 0
+		 WHERE ROOM_NO = #{roomNo}
+	</update>
+	
+	<update id="updateRoomCheckInOut" parameterType="Map">
+		UPDATE ROOM
+		   SET ROOM_CHECKIN = #{roomCheckIn}
+		     , ROOM_CHECKOUT = #{roomCheckOut}
 		 WHERE ROOM_NO = #{roomNo}
 	</update>
 	

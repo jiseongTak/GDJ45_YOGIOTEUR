@@ -25,6 +25,7 @@ public interface AdminService {
 	public Map<String, Object> findReservations();
 	public Map<String, Object> findReservationByMemberNo(HttpServletRequest request, Model model);
 	public Model findReservationByReserNo(HttpServletRequest request, Model model);
-	public Map<String, Object> removeReservation(Long reserNo);
+	public Map<String, Object> removeReservation(String reserNo);
+	public void changeRoomCheckInOut();
 	
 }

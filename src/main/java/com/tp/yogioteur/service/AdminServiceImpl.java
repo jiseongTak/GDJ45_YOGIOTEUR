@@ -28,7 +28,9 @@ import com.tp.yogioteur.domain.MemberDTO;
 import com.tp.yogioteur.domain.ReservationDTO;
 import com.tp.yogioteur.domain.RoomDTO;
 import com.tp.yogioteur.mapper.AdminMapper;
+import com.tp.yogioteur.mapper.ReservationMapper;
 import com.tp.yogioteur.util.MyFileUtils;
+import com.tp.yogioteur.util.NaverPageUtils;
 import com.tp.yogioteur.util.PageUtils;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -36,7 +38,8 @@ import net.coobird.thumbnailator.Thumbnails;
 @Service
 public class AdminServiceImpl implements AdminService {
 	
-@Autowired private AdminMapper adminMapper;
+	@Autowired private AdminMapper adminMapper;
+	@Autowired private ReservationMapper reservationMapper;
 	
 	@Override
 	@Transactional
@@ -85,27 +88,23 @@ public class AdminServiceImpl implements AdminService {
 					
 					// 첨부파일
 					File file = new File(dir, saved);
+				
+					// 첨부파일 서버에 저장(업로드)
+					multipartFile.transferTo(file);
 					
-					// 첨부파일 확인
-					String contentType = Files.probeContentType(file.toPath());  // 이미지의 Content-Type(image/jpeg, image/png, image/gif)
-					if(contentType.startsWith("image")) {
-						// 첨부파일 서버에 저장(업로드)
-						multipartFile.transferTo(file);
-						
-						// 썸네일 서버에 저장(썸네일 정보는 DB에 저장되지 않음)
-						Thumbnails.of(file)
-							.size(96, 54)
-							.toFile(new File(dir, "s_" + saved));
-						ImageDTO image = ImageDTO.builder()
-								.imagePath(path)
-								.imageOrigin(origin)
-								.imageSaved(saved)
-								.roomNo(room.getRoomNo())
-								.build();
-						
-						// FileAttach INSERT 수행
-						fileAttachResult += adminMapper.insertImage(image);
-					}
+					// 썸네일 서버에 저장(썸네일 정보는 DB에 저장되지 않음)
+					Thumbnails.of(file)
+						.size(96, 54)
+						.toFile(new File(dir, "s_" + saved));
+					ImageDTO image = ImageDTO.builder()
+							.imagePath(path)
+							.imageOrigin(origin)
+							.imageSaved(saved)
+							.roomNo(room.getRoomNo())
+							.build();
+					
+					// FileAttach INSERT 수행
+					fileAttachResult += adminMapper.insertImage(image);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -115,19 +114,16 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
+			out.println("<script>");
 			if(res == 1 && fileAttachResult == files.size()) {
-				out.println("<script>");
 				out.println("alert('객실이 등록되었습니다.')");
 				out.println("location.href='" + request.getContextPath() + "/admin/room'");
-				out.println("</script>");
-				out.close();
 			} else {
-				out.println("<script>");
 				out.println("alert('객실 등록에 실패했습니다.')");
 				out.println("history.back()");
-				out.println("</script>");
-				out.close();
 			}
+			out.println("</script>");
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -139,12 +135,12 @@ public class AdminServiceImpl implements AdminService {
 		int page = Integer.parseInt(opt.orElse("1"));
 		int totalRecord = adminMapper.selectRoomCount(); 
 		
-		PageUtils pageUtils = new PageUtils();
+		NaverPageUtils pageUtils = new NaverPageUtils();
 		pageUtils.setPageEntity(totalRecord, page);
 		
 		Map<String, Object> map = new HashMap<>();
-		map.put("beginRecord", pageUtils.getBeginRecord());
-		map.put("endRecord", pageUtils.getEndRecord());
+		map.put("beginRecord", pageUtils.getBeginRecord() - 1);
+		map.put("recordPerPage", pageUtils.getRecordPerPage());
 		
 		List<RoomDTO> rooms = adminMapper.selectRoomList(map);
 		
@@ -180,9 +176,10 @@ public class AdminServiceImpl implements AdminService {
 		// ResponseEntity
 		ResponseEntity<byte[]> entity = null;
 		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Type", Files.probeContentType(file.toPath()));
-			entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+			//HttpHeaders headers = new HttpHeaders();
+			//headers.add("Content-Type", Files.probeContentType(file.toPath()));
+			//entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+			entity = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(file), HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -206,19 +203,14 @@ public class AdminServiceImpl implements AdminService {
 				// 첨부 파일 알아내기
 				File file = new File(attach.getImagePath(), attach.getImageSaved());
 				try {
-					
-					// 첨부 파일이 이미지가 맞는지 확인
-					String contentType = Files.probeContentType(file.toPath());
-					if(contentType.startsWith("image")) {
-						// 원본 이미지 삭제
-						if(file.exists() ) {
-							file.delete();
-						}
-						// 썸네일 이미지 삭제
-						File thumbnail = new File(attach.getImagePath(), "s_" + attach.getImageSaved());
-						if(thumbnail.exists()) {
-							thumbnail.delete();
-						}
+					// 원본 이미지 삭제
+					if(file.exists() ) {
+						file.delete();
+					}
+					// 썸네일 이미지 삭제
+					File thumbnail = new File(attach.getImagePath(), "s_" + attach.getImageSaved());
+					if(thumbnail.exists()) {
+						thumbnail.delete();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -230,19 +222,16 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
+			out.println("<script>");
 			if(res == 1) {
-				out.println("<script>");
 				out.println("alert('객실이 삭제되었습니다.')");
 				out.println("location.href='" + request.getContextPath() + "/admin/room'");
-				out.println("</script>");
-				out.close();
 			} else {
-				out.println("<script>");
 				out.println("alert('객실이 삭제되지 않았습니다.')");
 				out.println("history.back()");
-				out.println("</script>");
-				out.close();
 			}
+			out.println("</script>");
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -302,28 +291,25 @@ public class AdminServiceImpl implements AdminService {
 					// 첨부파일
 					File file = new File(dir, saved);
 					
-					// 첨부파일 확인
-					String contentType = Files.probeContentType(file.toPath());  // 이미지의 Content-Type(image/jpeg, image/png, image/gif)
-					if(contentType.startsWith("image")) {
-						// 첨부파일 서버에 저장(업로드)
-						multipartFile.transferTo(file);
-						
-						// 썸네일 서버에 저장(썸네일 정보는 DB에 저장되지 않음)
-						Thumbnails.of(file)
-							.size(96, 54)
-							.toFile(new File(dir, "s_" + saved));
-						
-						ImageDTO image = ImageDTO.builder()
-								.imagePath(path)
-								.imageOrigin(origin)
-								.imageSaved(saved)
-								.roomNo(room.getRoomNo())
-								.imageNo(imageNo)
-								.build();
-						
-						// FileAttach INSERT 수행
-						fileAttachResult += adminMapper.updateImageByNo(image);
-					}
+					// 첨부파일 서버에 저장(업로드)
+					multipartFile.transferTo(file);
+					
+					// 썸네일 서버에 저장(썸네일 정보는 DB에 저장되지 않음)
+					Thumbnails.of(file)
+						.size(96, 54)
+						.toFile(new File(dir, "s_" + saved));
+					
+					ImageDTO image = ImageDTO.builder()
+							.imagePath(path)
+							.imageOrigin(origin)
+							.imageSaved(saved)
+							.roomNo(room.getRoomNo())
+							.imageNo(imageNo)
+							.build();
+					
+					// FileAttach INSERT 수행
+					fileAttachResult += adminMapper.updateImageByNo(image);
+					
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -333,19 +319,16 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
+			out.println("<script>");
 			if(res == 1 || fileAttachResult == files.size()) {
-				out.println("<script>");
 				out.println("alert('객실이 수정되었습니다.')");
 				out.println("location.href='" + request.getContextPath() + "/admin/roomDetail?roomNo=" + roomNo + "'");
-				out.println("</script>");
-				out.close();
 			} else {
-				out.println("<script>");
 				out.println("alert('객실이 수정되지 않았습니다.')");
 				out.println("history.back()");
-				out.println("</script>");
-				out.close();
 			}
+			out.println("</script>");
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -368,12 +351,12 @@ public class AdminServiceImpl implements AdminService {
 		int page = Integer.parseInt(opt.orElse("1"));
 		int totalRecord = adminMapper.selectMemberCount();
 		
-		PageUtils pageUtils = new PageUtils();
+		NaverPageUtils pageUtils = new NaverPageUtils();
 		pageUtils.setPageEntity(totalRecord, page);
 		
 		Map<String, Object> map = new HashMap<>();
-		map.put("beginRecord", pageUtils.getBeginRecord());
-		map.put("endRecord", pageUtils.getEndRecord());
+		map.put("beginRecord", pageUtils.getBeginRecord() - 1);
+		map.put("recordPerPage", pageUtils.getRecordPerPage());
 		
 		List<MemberDTO> members = adminMapper.selectMemberList(map);
 		
@@ -393,7 +376,7 @@ public class AdminServiceImpl implements AdminService {
 	public Map<String, Object> findReservations() {
 		Map<String, Object> map = new HashMap<>();
 		
-		List<MemberDTO> reservations = adminMapper.selectReservationList();
+		List<ReservationDTO> reservations = adminMapper.selectReservationList();
 		map.put("reservations", reservations);
 		
 		return map;
@@ -410,7 +393,7 @@ public class AdminServiceImpl implements AdminService {
 	
 	@Override
 	public Model findReservationByReserNo(HttpServletRequest request, Model model) {
-		Long reserNo = Long.parseLong(request.getParameter("reserNo"));
+		String reserNo = request.getParameter("reserNo");
 		ReservationDTO reservation = adminMapper.selectReservationByReserNo(reserNo);
 		model.addAttribute("reservation", reservation);
 		model.addAttribute("member", reservation.getMember());
@@ -419,12 +402,19 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	public Map<String, Object> removeReservation(Long reserNo){
+	@Transactional
+	public Map<String, Object> removeReservation(String reserNo){
 		int res = adminMapper.deleteReservation(reserNo);
+		reservationMapper.deletePrice(reserNo);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("res", res);
 		
 		return map;
+	}
+	
+	@Override
+	public void changeRoomCheckInOut() {
+		
 	}
 	
 }

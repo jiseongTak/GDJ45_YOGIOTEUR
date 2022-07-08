@@ -30,9 +30,9 @@ public class MyFileUtils {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		String sep = Matcher.quoteReplacement(File.separator);
-		return "C:" + sep + "upload" + sep + year + sep + month + sep + day;
+		return "resources" + sep + "upload" + sep + year + sep + fillZero(month) + sep + fillZero(day);
 	}
-	
+		
 	// 어제 경로
 	public static String getYesterdayPath() {
 		Calendar calendar = Calendar.getInstance();
@@ -41,7 +41,12 @@ public class MyFileUtils {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		String sep = Matcher.quoteReplacement(File.separator);
-		return "C:" + sep + "upload" + sep + year + sep + month + sep + day;
+		return "resources" + sep + "upload" + sep + year + sep + fillZero(month) + sep + fillZero(day);
+	}
+		
+	// 1~9 => 01~09
+	public static String fillZero(int num) {
+		return num < 10 ? "0" + num : "" + num;
 	}
 	
 }

@@ -5,6 +5,8 @@
 	margin-top: 50px;
 	margin-left: 10%;
 	margin-right: 10%;
+	margin-bottom: 5%;
+	height: auto;
 }
 
 .grid_item {
@@ -18,50 +20,56 @@
 
 .grid_item.index {
 	text-align: center;
-	width: 20%;
+	width: 15%;
 	background-color: silver;
+	margin-right: 40px;
+	font-size: 18px;
+}
+
+h3 {
+	margin-bottom: 5px;
 }
 
 #f {
-	padding-left: 20%;
+	padding-left: 35%;
 	text-align: left;
 }
 
-	.unlink, .link {
-		display: inline-block;  /* 같은 줄에 둘 수 있고, width, height 등 크기 지정 속성을 지정할 수 있다. */
-		padding: 10px;
-		margin: 5px;
-		border: 1px solid white;
-		text-align: center;
-		text-decoration: none;  /* 링크 밑줄 없애기 */
-		color: gray;
-	}
-	.link:hover {
-		border: 1px solid orange;
-		color: limegreen;
-	}
-	
-	table {
-		border-collapse: collapse;
-	}
-	
-	td:nth-of-type(1) { width: 80px; }
-	td:nth-of-type(2) { width: 160px; }
-	td:nth-of-type(3) { width: 240px; }
-	td:nth-of-type(4) { width: 240px; }
-	td:nth-of-type(5) { width: 120px; }
-	td:nth-of-type(6) { width: 160px; }
-	td:nth-of-type(7) { width: 160px; }
-	
-	td {
-		padding: 5px;
-		border-top: 1px solid silver;
-		border-bottom: 1px solid silver;
-		text-align: center;
-	}
-	
-	tfoot td {
-		border-left: 0;
-		border-right: 0;
-		border-bottom: 0;
-	}
+.unlink, .link {
+	display: inline-block;  /* 같은 줄에 둘 수 있고, width, height 등 크기 지정 속성을 지정할 수 있다. */
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid white;
+	text-align: center;
+	text-decoration: none;  /* 링크 밑줄 없애기 */
+	color: gray;
+}
+.link:hover {
+	border: 1px solid orange;
+	color: limegreen;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+td:nth-of-type(1) { width: 100px; }
+td:nth-of-type(2) { width: 120px; }
+td:nth-of-type(3) { width: 80px; }
+td:nth-of-type(4) { width: 200px; }
+td:nth-of-type(5) { width: 160px; }
+td:nth-of-type(6) { width: 160px; }
+td:nth-of-type(7) { width: 120px; }
+
+td {
+	padding: 5px;
+	border-top: 1px solid silver;
+	border-bottom: 1px solid silver;
+	text-align: center;
+}
+
+tfoot td {
+	border-left: 0;
+	border-right: 0;
+	border-bottom: 0;
+}

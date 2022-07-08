@@ -51,10 +51,13 @@
 			if($('#image1').val() == '' || $('#image2').val() == '') {
 				event.preventDefault();
 				alert('이미지를 첨부하세요.');
-			} else if($('#roomName').val() == '' || $('#roomPrice').val() == '') {
+				return false;
+			} else if($('#roomName').val() == '' || $('#roomPrice').val() == '' || $('#rtNo').val() == '') {
 				event.preventDefault();
 				alert('필수정보를 입력하세요.');
+				return false;
 			}
+			return true;
 		})
 	}
 	
@@ -74,24 +77,41 @@
 	
 </script>
 <link rel="stylesheet" href="../resources/css/admin.css">
+<link rel="stylesheet" href="../resources/css/header.css">
+<link rel="stylesheet" href="../resources/css/footer.css">
+<style type="text/css">
+	.roomName, .roomPrice {
+		cursor: pointer;
+		background-color: #fff;
+		font-size: 14px;
+		border-color: #e6edef;
+		padding: 0.35rem;
+		font-weight: 400;
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+	}
+	.roomType {
+		
+	}
+</style>
 </head>
 <body>
-		<jsp:include page="../layout/header.jsp"></jsp:include>
+	<jsp:include page="../layout/header.jsp"></jsp:include>
 	<div class="container">
 		<jsp:include page="index.jsp"></jsp:include>
 		
 		<div class="grid_item room">
 			<h3>객실등록</h3>
 			<form id="f" action="${contextPath}/room/saveRoom" method="post" enctype="multipart/form-data">
-				객실타입
-				<select name="rtNo">
-					<option value="">==선택==</option>
-					<option value="1">싱글</option>
-					<option value="2">더블</option>
-					<option value="3">트윈</option>
-				</select><br>
-				객실이름 <input type="text" name="roomName" id="roomName"><br>
-				객실가격 <input type="text" name="roomPrice" id="roomPrice"><br><br>
+				객실타입:
+				<select id="rtNo" name="rtNo" class="roomType">
+					<option value="">선택</option>
+					<option value="1">SINGLE</option>
+					<option value="2">DOUBLE</option>
+					<option value="3">TWIN</option>
+				</select><br><br>
+				객실이름: <input type="text" class="roomName" name="roomName" id="roomName"><br><br>
+				객실가격: <input type="text" class="roomPrice" name="roomPrice" id="roomPrice"><br><br>
 				이미지 첨부1 <input type="file" name="image1" id="image1"><br>
 				<img id="preview1" width="300px"><br>
 				이미지 첨부2 <input type="file" name="image1" id="image2"><br>
@@ -100,6 +120,6 @@
 			</form>
 		</div>
 	</div>
-		<jsp:include page="../layout/footer.jsp"></jsp:include>
+	<jsp:include page="../layout/footer.jsp"></jsp:include>
 </body>
 </html>

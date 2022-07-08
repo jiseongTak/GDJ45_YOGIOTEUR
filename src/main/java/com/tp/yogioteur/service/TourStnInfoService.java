@@ -35,11 +35,11 @@ public class TourStnInfoService implements OpenAPIService {
 		try {
 			sb.append("http://apis.data.go.kr/1360000/TourStnInfoService/getTourStnVilageFcst");
 			sb.append("?serviceKey=").append(URLEncoder.encode(serviceKey, "UTF-8"));
-			sb.append("&numOfRows=").append(URLEncoder.encode("16", "UTF-8"));
+			sb.append("&numOfRows=").append(URLEncoder.encode("33", "UTF-8"));
 			sb.append("&pageNo=").append(URLEncoder.encode("12", "UTF-8"));
 			sb.append("&CURRENT_DATE=").append(URLEncoder.encode(date, "UTF-8"));
 			sb.append("&HOUR=").append(URLEncoder.encode("12", "UTF-8"));
-			sb.append("&COURSE_ID=").append(URLEncoder.encode("389", "UTF-8"));
+			sb.append("&COURSE_ID=").append(URLEncoder.encode("392", "UTF-8"));
 			sb.append("&dataType=").append(URLEncoder.encode("JSON", "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -84,7 +84,6 @@ public class TourStnInfoService implements OpenAPIService {
 		} catch (IOException e) {
 			e.printStackTrace();  // API 응답이 실패하였다.
 		}
-		System.out.println(sb2.toString());
 		JSONObject obj = new JSONObject(sb2.toString());
 		JSONObject items = obj.getJSONObject("response").getJSONObject("body").getJSONObject("items");
 		JSONArray item = items.getJSONArray("item");
@@ -96,8 +95,8 @@ public class TourStnInfoService implements OpenAPIService {
 			String spotName = item.getJSONObject(i).getString("spotName");
 			String thema = item.getJSONObject(i).getString("thema");
 			if((spotName.equals("(서귀포)성산일출봉") == true ||
-					spotName.equals("(제주)제주해녀박물관") == true ||
-						spotName.equals("(제주)토끼섬") == true) && thema.equals("자연/힐링"))  {
+					spotName.equals("(서귀포)섭지코지") == true ||
+						spotName.equals("(서귀포)천지연폭포") == true) && thema.equals("자연/힐링"))  {
 				list.add(item.getJSONObject(i));
 			}
 		}
@@ -109,6 +108,7 @@ public class TourStnInfoService implements OpenAPIService {
 		out.close();
 	}
 	
+	// API 시간 갱신
 	@Override
 	@Scheduled(cron = "0 0 6 1/1 * *") //매일 새벽 6시 동작
 	public void setDate() {

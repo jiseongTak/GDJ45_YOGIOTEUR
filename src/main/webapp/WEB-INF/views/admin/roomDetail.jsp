@@ -31,7 +31,6 @@
 		})
 		fnPreview($('#image1'), $('#preview1'));
 		fnPreview($('#image2'), $('#preview2'));
-		//fnModify();
 		fnSelectStatus();
 	})
 	
@@ -49,17 +48,6 @@
 		})
 	}
 	
-	/* function fnModify() {
-		$('#f').on('submit', function(event) {
-			if($('#roomName').val() == '${room.roomName}') {
-				alert('변경사항이 없습니다.');
-				event.preventDefault();
-				return false;
-			}
-			return true;
-		})
-	} */
-	
 	function fnSelectStatus() {
 		var status = ${room.roomStatus}
 		switch(status) {
@@ -74,32 +62,50 @@
 	
 </script>
 <link rel="stylesheet" href="../resources/css/admin.css">
+<link rel="stylesheet" href="../resources/css/header.css">
+<link rel="stylesheet" href="../resources/css/footer.css">
+<style type="text/css">
+	.roomName, .roomPrice {
+		cursor: pointer;
+		background-color: #fff;
+		font-size: 14px;
+		border-color: #e6edef;
+		padding: 0.35rem;
+		font-weight: 400;
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+	}
+	.rtNo {
+		margin-right: 20px;
+	}
+</style>
 </head>
 <body>
-	
+	<jsp:include page="../layout/header.jsp"></jsp:include>
 	<div class="container">
 		<jsp:include page="index.jsp"></jsp:include>
 		
 		<div class="grid_item room">
 			<h3>객실상세</h3>
 			<form id="f" action="${contextPath}/room/changeRoom" method="post" enctype="multipart/form-data">
-				객실번호: ${room.roomNo}<br>
 				<input type="hidden" name="roomNo" value="${room.roomNo}">
-				객실타입
-				<select name="rtNo" id="rtNo">
-					<option value="1">싱글</option>
-					<option value="2">더블</option>
-					<option value="3">트윈</option>
-				</select><br>
-				객실이름 <input type="text" name="roomName" id="roomName" value="${room.roomName}"><br>
-				객실가격 <input type="text" name="roomPrice" id="roomPrice" value="${room.roomPrice}"><br>
+				객실타입:
+				<select class="rtNo" name="rtNo" id="rtNo">
+					<option value="1">SINGLE</option>
+					<option value="2">DOUBLE</option>
+					<option value="3">TWIN</option>
+				</select>
+				객실번호: ${room.roomNo}
+				<br><br>
+				객실이름: <input type="text" class="roomName" name="roomName" id="roomName" value="${room.roomName}"><br><br>
+				객실가격: <input type="text" class="roomPrice" name="roomPrice" id="roomPrice" value="${room.roomPrice}"><br><br>
 				예약상태: 
 				<select name="roomStatus" id="roomStatus">
 					<option value="0">예약가능</option>
 					<option value="1">예약불가</option>
-				</select><br>
-				체크인 ${room.roomCheckIn}<br>
-				체크아웃 ${room.roomCheckOut}<br>
+				</select><br><br>
+				체크인: ${room.roomCheckIn}
+				체크아웃: ${room.roomCheckOut}<br><br>
 				
 				사진1 <input type="file" name="image1" id="image1">
 				<div>

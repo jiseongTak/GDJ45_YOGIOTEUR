@@ -157,9 +157,9 @@
 </script>
 <script>	
   //함수
-  
+  	var jquery = jQuery.noConflict();
 	function fnTour(){
-		$.ajax({
+		jquery.ajax({
 			url: '${contextPath}/admin/tour',
 			type: 'get',
 			dataType: 'json',
@@ -168,7 +168,7 @@
 				//$('#items').empty();
 				var html = '';
 				console.log(responseText);
-				$.each(responseText, function(i, item){
+				jquery.each(responseText, function(i, item){
 					html += '<td>' + item.tm + '</td>';
 					html += '<td>' + item.spotName + '</td>';
 					var sky;
@@ -187,7 +187,7 @@
 					html += '<td>' + item.th3 + '</td>';
 					html += '<td>' + item.rhm + '%</td>';
 					html += '<td>' + item.pop + '%</td>';
-					$('.index'+i).append(html);
+					jquery('.index'+i).append(html);
 					html = '';
 				})
 			}

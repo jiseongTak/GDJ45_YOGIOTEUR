@@ -1,5 +1,9 @@
 package com.tp.yogioteur.util;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class PageUtils {
 
 	
@@ -148,16 +152,6 @@ public class PageUtils {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		// 전달되는 path의 종류
-		
-		// 1. 파라미터가 없는 경우
-		//    /employee/list
-		//    /employee/list ?page=1  (? 사용)
-		
-		// 2. 파라미터가 있는 경우(path에 ?가 포함되어 있다)
-		//    /employee/search?column=값&query=값
-		//    /employee/search?column=값&query=값 &page=1  (& 사용)
-		
 		String concat = path.contains("?") ? "&" : "?";
 		path += concat;
 		
@@ -216,63 +210,6 @@ public class PageUtils {
 		*/
 		return sb.toString();
 		
-	}
-
-
-	// Getter/Setter
-	public int getTotalRecord() {
-		return totalRecord;
-	}
-	public void setTotalRecord(int totalRecord) {
-		this.totalRecord = totalRecord;
-	}
-	public int getRecordPerPage() {
-		return recordPerPage;
-	}
-	public void setRecordPerPage(int recordPerPage) {
-		this.recordPerPage = recordPerPage;
-	}
-	public int getTotalPage() {
-		return totalPage;
-	}
-	public void setTotalPage(int totalPage) {
-		this.totalPage = totalPage;
-	}
-	public int getPage() {
-		return page;
-	}
-	public void setPage(int page) {
-		this.page = page;
-	}
-	public int getBeginRecord() {
-		return beginRecord;
-	}
-	public void setBeginRecord(int beginRecord) {
-		this.beginRecord = beginRecord;
-	}
-	public int getEndRecord() {
-		return endRecord;
-	}
-	public void setEndRecord(int endRecord) {
-		this.endRecord = endRecord;
-	}
-	public int getPagePerBlock() {
-		return pagePerBlock;
-	}
-	public void setPagePerBlock(int pagePerBlock) {
-		this.pagePerBlock = pagePerBlock;
-	}
-	public int getBeginPage() {
-		return beginPage;
-	}
-	public void setBeginPage(int beginPage) {
-		this.beginPage = beginPage;
-	}
-	public int getEndPage() {
-		return endPage;
-	}
-	public void setEndPage(int endPage) {
-		this.endPage = endPage;
 	}
 
 }

@@ -25,21 +25,13 @@ public class AdminController {
 	@Autowired private OpenAPIService openAPIService;
 	@Autowired private AdminService adminService;
 	
-	@GetMapping("/admin/adminPage")
-	public String adminPage() {
-		return "admin/adminPage";
-	}	
-	
-	@GetMapping("/admin/tourPage")
-	public String tourPage() {
-		return "admin/tour";
-	}
-	
+	/* OPEN API */
 	@GetMapping("/admin/tour")
 	public void tour(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		openAPIService.setDate();
 		openAPIService.execute(request, response);
 	}
+	
 	
 	/* 객실 관리 */
 	@GetMapping("/admin/addRoomPage")
@@ -86,6 +78,7 @@ public class AdminController {
 		return adminService.findRoomByStatus(roomStatus);
 	}
 
+	
 	/* 회원 관리 */
 	@GetMapping("/admin/member")
 	public String member(HttpServletRequest request, Model model) {
@@ -128,7 +121,7 @@ public class AdminController {
 	
 	@ResponseBody
 	@GetMapping("/admin/removeReser")
-	public Map<String, Object> removeReser(@RequestParam Long reserNo) {
+	public Map<String, Object> removeReser(@RequestParam String reserNo) {
 		return adminService.removeReservation(reserNo);
 	}
 

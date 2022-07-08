@@ -7,6 +7,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+	@font-face {
+		font-family: 'MICEMyungjo';
+		src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-01@1.0/MICEMyungjo.woff2') format('woff2');
+		font-weight: normal;
+		font-style: normal;
+	}
+	.member {
+		font-family: 'MICEMyungjo';
+	}
+</style>
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
 
@@ -22,12 +33,14 @@
 	
 </script>
 <link rel="stylesheet" href="../resources/css/admin.css">
+<link rel="stylesheet" href="../resources/css/header.css">
+<link rel="stylesheet" href="../resources/css/footer.css">
 </head>
 <body>
-	
+
+	<jsp:include page="../layout/header.jsp"></jsp:include>
 	<div class="container">
 		<jsp:include page="index.jsp"></jsp:include>
-		
 		<div class="grid_item member">
 			<h3>회원 목록</h3>
 			<table class="table">
@@ -45,8 +58,7 @@
 				<tbody id="members">
 					<c:forEach items="${members}" var="member" varStatus="vs">
 						<tr>
-							<!-- <td>${beginNo - vs.index}</td> -->
-							<td>${member.memberNo}</td>
+							<td>${beginNo - vs.index}</td>
 							<td>${member.memberId}</td>
 							<td>${member.memberName}</td>
 							<td>${member.memberEmail}</td>
@@ -63,8 +75,8 @@
 				</tfoot>
 			</table>
 		</div>
-		
 	</div>
-
+	<jsp:include page="../layout/footer.jsp"></jsp:include>
+	
 </body>
 </html>

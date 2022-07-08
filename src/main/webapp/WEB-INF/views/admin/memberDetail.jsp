@@ -52,23 +52,48 @@
 	}
 	
 </script>
+<style type="text/css">
+	table {
+		margin: 0 auto;
+	}
+	.member {
+		display: inline-block;
+		box-sizing: border-box;
+		margin: 0 auto;
+	}
+	ul {
+	    display: flex;
+	    align-content: flex-start;
+	    flex-direction: column;
+	    flex-wrap: wrap;
+	    overflow: auto;
+	}
+	li {
+		margin-bottom: 20px;
+	}
+</style>
 <link rel="stylesheet" href="../resources/css/admin.css">
+<link rel="stylesheet" href="../resources/css/header.css">
+<link rel="stylesheet" href="../resources/css/footer.css">
 </head>
 <body>
-	
+
+	<jsp:include page="../layout/header.jsp"></jsp:include>
 	<div class="container">
 		<jsp:include page="index.jsp"></jsp:include>
 		
 		<div class="grid_item member">
 			<h3>회원상세</h3>
-			회원번호: ${member.memberNo}<br>
-			아이디: ${member.memberId}<br>
-			성명: ${member.memberName}<br>
-			이메일: ${member.memberEmail}<br>
-			연락처: ${member.memberPhone}<br>
-			주소: ${member.memberRoadAddr}<br>
-			가입일: ${member.signIn}<br>
-			<hr>
+				<ul>
+					<li>회원번호: ${member.memberNo}</li>
+					<li>아이디: ${member.memberId}</li>
+					<li>성명: ${member.memberName}</li>
+					<li>이메일: ${member.memberEmail}</li>
+					<li>연락처: ${member.memberPhone}</li>
+					<li>주소: ${member.memberRoadAddr}</li>
+					<li>가입일: ${member.signIn}</li>
+				</ul>
+			<hr><br>
 			<table>
 				<caption>예약 내역</caption>
 				<thead>
@@ -81,15 +106,12 @@
 					</tr>
 				</thead>
 				<tbody id="items">
-					
 				</tbody>
-				<tfoot>
-					
-				</tfoot>
 			</table>
 		</div>
 		
 	</div>
-
+	<jsp:include page="../layout/footer.jsp"></jsp:include>
+	
 </body>
 </html>
